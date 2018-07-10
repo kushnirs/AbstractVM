@@ -6,7 +6,7 @@
 /*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/20 17:33:58 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/10 12:34:34 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/10 16:15:45 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <vector>
 
 enum	eOperandType 
 {
