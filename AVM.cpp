@@ -6,7 +6,7 @@
 /*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:44 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/10 16:55:08 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/10 18:09:38 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,9 @@ void AbstarctVM::parse_string(void)
     std::string					str1("push pop dump assert add sub mul div mod print exit");
     std::string					str2("int8 int16 int32 float double");
 
+
+    if (string == ";;")
+    	return;
     while (std::getline(iss, token, ' '))
     	tokens.push_back(token);
     if (tokens.size() != 2)
@@ -42,15 +45,16 @@ void AbstarctVM::parse_string(void)
 	else
 		command = tokens[0];
 
-	size_t	iter;
-	size_t	iter2;
+	size_t	iter = 0;
+	size_t	iter2 = 0;
 	if ((iter = tokens[1].find("(")) == std::string::npos ||
-		(iter2 = tokens[1].find(")")) == std::string::npos || iter2 != tokens[1].size())
+		(iter2 = tokens[1].find(")")) == std::string::npos || iter2 + 1 != tokens[1].size())
 		throw std::invalid_argument("avm: wrong type");
 	else
 		type = tokens[1].substr(0, iter);
 	if (str2.find(type) == std::string::npos || type.find(" ") != std::string::npos)
 		throw std::invalid_argument("avm: wrong type");
+	string = tokens[1].substr(iter + 1, iter2 - iter - 1);
 }
 
 void AbstarctVM::read_std_in()

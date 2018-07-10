@@ -6,7 +6,7 @@
 /*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:32:22 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/10 15:02:12 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/10 18:14:09 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int main(int ac, char **av)
 				}
 				else if (cat.read_file(av[1]))
 					break;
-			}
+		}
 	}
 	catch (std::exception & e)
 	{
