@@ -6,7 +6,7 @@
 #    By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/04/02 10:58:17 by skushnir          #+#    #+#              #
-#    Updated: 2018/06/20 19:21:41 by skushnir         ###   ########.fr        #
+#    Updated: 2018/07/10 11:01:51 by skushnir         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CC			= clang++
 
 CFLAGS		= -Wall -Wextra -Werror
 
-SRC			= main.cpp 
+SRC			= main.cpp Operand.cpp IOperand.cpp
 
 OBJ			= $(SRC:.cpp=.o)
 

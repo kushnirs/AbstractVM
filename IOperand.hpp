@@ -6,7 +6,7 @@
 /*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/20 17:33:58 by skushnir          #+#    #+#             */
-/*   Updated: 2018/06/20 19:21:42 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/10 12:34:34 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,16 @@
 # define IOPERAND_HPP
 
 #include <iostream>
+#include <stdexcept>
 
- enum eOperandType 
- {
-    int8,
-    int16,
-    int32,
-    float,
-    double
- };
+enum	eOperandType 
+{
+   _int8,
+   _int16,
+   _int32,
+   _float,
+   _double
+};
 
 class IOperand 
 {
