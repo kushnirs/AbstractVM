@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+         #
+#    By: sergee <sergee@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/04/02 10:58:17 by skushnir          #+#    #+#              #
-#    Updated: 2018/07/10 11:01:51 by skushnir         ###   ########.fr        #
+#    Updated: 2018/07/11 20:15:05 by sergee           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,14 +16,14 @@ CC			= clang++
 
 CFLAGS		= -Wall -Wextra -Werror
 
-SRC			= main.cpp Operand.cpp IOperand.cpp
+SRC			= main.cpp AVM.cpp
 
 OBJ			= $(SRC:.cpp=.o)
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) -lncurses 
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJ)
 
 $(OBJ): %.o : %.cpp
 	$(CC) $(CFLAGS) -c $< 

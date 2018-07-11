@@ -3,19 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:32:22 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/10 18:14:09 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/11 11:23:02 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
+#include "IOperand.hpp"
 #include "AVM.hpp"
 
 int main(int ac, char **av)
 {
-	AbstarctVM	cat;
+	std::stack<IOperand*> avm;
+	AbstarctVM	cat(avm);
 
 	try
 	{

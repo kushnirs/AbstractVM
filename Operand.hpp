@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Operand.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/20 19:21:40 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/10 12:21:14 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/11 21:44:08 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,21 +22,67 @@ class Operand : public IOperand
 		T				value;
 		int				presicion;
 		eOperandType	type;
+		std::string		res;
 	public:
-		int					getPrecision( void );
-		eOperandType		getType( void );
-		IOperand const *	operator+( IOperand const & rhs);
-		IOperand const *	operator-( IOperand const & rhs);
-		IOperand const *	operator*( IOperand const & rhs);
-		IOperand const *	operator/( IOperand const & rhs);
-		IOperand const *	operator%( IOperand const & rhs);
-		std::string const & toString( void );
-		~Operand( void ) {}
-	
+		T 					getValue(void);
+		int					getPrecision( void ) const;
+		eOperandType		getType( void ) const;
+		IOperand const *	operator+( IOperand const & rhs) const;
+		IOperand const *	operator-( IOperand const & rhs) const;
+		IOperand const *	operator*( IOperand const & rhs) const;
+		IOperand const *	operator/( IOperand const & rhs) const;
+		IOperand const *	operator%( IOperand const & rhs) const;
+		std::string const & toString( void ) const;
+		Operand(T & val, int pres, eOperandType t);
+		Operand(Operand<T> & a);
+		~Operand( void );
 		Operand<T> & operator = (Operand & arr);
-		Operand<T> & operator [] (Operand const & arr);
-		T & operator [] (unsigned int n);
-		unsigned	size();
 };
+
+template < typename T>
+Operand<T>::Operand(T & val, int pres, eOperandType t) : value(val), presicion(pres), type(t), res(std::to_string(value)) {  }
+
+template < typename T>
+Operand<T>::Operand(Operand<T> & a) { *this = a; }
+
+template < typename T>
+Operand<T> & Operand<T>::operator = (Operand & arr)
+{
+	value = arr.getValue();
+	presicion = arr.getPrecision();
+	type = arr.getType();
+	res = std::to_string(value);
+	return (*this);
+}
+
+template < typename T>
+Operand<T>::~Operand( void ) {  }
+
+template < typename T>
+T 					Operand<T>::getValue(void) { return(value); }
+
+template < typename T>
+int					Operand<T>::getPrecision( void ) const { return(presicion); }
+
+template < typename T>
+eOperandType		Operand<T>::getType( void ) const { return(type);}
+
+template < typename T>
+IOperand const *	Operand<T>::operator+( IOperand const & rhs) const {return(&rhs);}
+
+template < typename T>
+IOperand const *	Operand<T>::operator-( IOperand const & rhs) const { return (&rhs); }
+
+template < typename T>
+IOperand const *	Operand<T>::operator*( IOperand const & rhs) const { return (&rhs); }
+
+template < typename T>
+IOperand const *	Operand<T>::operator/( IOperand const & rhs) const { return (&rhs); }
+
+template < typename T>
+IOperand const *	Operand<T>::operator%( IOperand const & rhs) const { return (&rhs); }
+
+template < typename T>
+std::string const & Operand<T>::toString( void ) const { return(res); }
 
 #endif

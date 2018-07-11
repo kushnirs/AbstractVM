@@ -3,27 +3,60 @@
 /*                                                        :::      ::::::::   */
 /*   AVM.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:44 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/10 18:09:38 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/12 00:26:53 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "AVM.hpp"
 
-AbstarctVM::AbstarctVM(void) : string("") , val(NULL), command(""), type("") { }
+AbstarctVM::AbstarctVM(std::stack<IOperand*> &st) : avm(st), string("") , val(NULL), command(""), type(_int8) { }
 
-AbstarctVM::AbstarctVM(AbstarctVM const & a) {
-	*this = a;
-}
+AbstarctVM::AbstarctVM(AbstarctVM const & a) : avm(a.avm) { *this = a; }
 
-AbstarctVM::~AbstarctVM(void){ }
+AbstarctVM::~AbstarctVM(void) { }
 
-AbstarctVM & AbstarctVM::operator=(AbstarctVM const & rhs){	val = rhs.getVal(); return (*this);}
+AbstarctVM & AbstarctVM::operator=(AbstarctVM const & rhs) {
+	avm = rhs.getStack();
+	string = rhs.getString();
+	val = rhs.getVal();
+	command = rhs.getCommand();
+	type = rhs.getType();
+	return (*this); }
+
+std::string AbstarctVM::getString() const { return (string); }
 
 IOperand* AbstarctVM::getVal() const { return (val); }
-std::string AbstarctVM::getString() const { return (string); }
+
+std::string AbstarctVM::getCommand() const { return (command); }
+
+eOperandType AbstarctVM::getType() const { return (type); }
+
+std::stack<IOperand*> AbstarctVM::getStack() const { return (avm); }
+
+IOperand const * AbstarctVM::createOperand() const
+{
+	int val = std::stoi(string);
+	switch (type)
+	{
+		case _int8 :
+			return (new Operand<int8_t>(static_cast<int8_t>(val), 0, type));
+		default :
+			std::cout << "sobaka" << std::endl;
+	}
+	return (NULL);
+}
+
+void AbstarctVM::aply_instructions()
+{
+	IOperand const * lol = createOperand();
+	if (command == "push")
+		avm.push(const_cast<IOperand*>(lol));
+	else
+		std::cout << "lalka" << std::endl;
+}
 
 void AbstarctVM::parse_string(void)
 {
@@ -31,7 +64,7 @@ void AbstarctVM::parse_string(void)
     std::istringstream			iss(string);
     std::string 				token;
     std::string					str1("push pop dump assert add sub mul div mod print exit");
-    std::string					str2("int8 int16 int32 float double");
+    std::string					str3("0123456789.");
 
 
     if (string == ";;")
@@ -51,11 +84,34 @@ void AbstarctVM::parse_string(void)
 		(iter2 = tokens[1].find(")")) == std::string::npos || iter2 + 1 != tokens[1].size())
 		throw std::invalid_argument("avm: wrong type");
 	else
-		type = tokens[1].substr(0, iter);
-	if (str2.find(type) == std::string::npos || type.find(" ") != std::string::npos)
-		throw std::invalid_argument("avm: wrong type");
+	{
+		std::string t;
+		t = tokens[1].substr(0, iter);
+		if (t == "int8" )
+			type = _int8;
+		else if (t == "int16")
+			type = _int16;
+		else if (t == "int32")
+			type = _int32;
+		else if (t == "float")
+			type = _float;
+		else if (t == "double")
+			type = _double;
+		else
+			throw std::invalid_argument("avm: wrong type");
+	}
 	string = tokens[1].substr(iter + 1, iter2 - iter - 1);
+
+	int a = 0;
+	for (size_t i = 0; i < string.length(); i++)
+	{
+		string[i] == '.' ? a++ : 0;
+		if (str3.find(string[i]) == std::string::npos || a == 2)
+			throw std::invalid_argument("avm: wrong symbol in number");
+	}
+	aply_instructions();
 }
+
 
 void AbstarctVM::read_std_in()
 {
