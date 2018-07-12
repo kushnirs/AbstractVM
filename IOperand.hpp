@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IOperand.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
+/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/20 17:33:58 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/11 10:43:25 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/12 10:09:18 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <stdexcept>
 #include <vector>
 #include <stack>
+#include <typeinfo> 
 
 enum	eOperandType 
 {

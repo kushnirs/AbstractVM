@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Operand.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
+/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/20 19:21:40 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/11 21:44:08 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/12 12:58:04 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,14 @@ class Operand : public IOperand
 		IOperand const *	operator/( IOperand const & rhs) const;
 		IOperand const *	operator%( IOperand const & rhs) const;
 		std::string const & toString( void ) const;
-		Operand(T & val, int pres, eOperandType t);
+		Operand(T && val, int pres, eOperandType t);
 		Operand(Operand<T> & a);
 		~Operand( void );
 		Operand<T> & operator = (Operand & arr);
 };
 
 template < typename T>
-Operand<T>::Operand(T & val, int pres, eOperandType t) : value(val), presicion(pres), type(t), res(std::to_string(value)) {  }
+Operand<T>::Operand(T && val, int pres, eOperandType t) : value(val), presicion(pres), type(t), res(std::to_string(value)) {  }
 
 template < typename T>
 Operand<T>::Operand(Operand<T> & a) { *this = a; }

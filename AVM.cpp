@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   AVM.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
+/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:44 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/12 00:26:53 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/12 14:01:53 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "AVM.hpp"
 
-AbstarctVM::AbstarctVM(std::stack<IOperand*> &st) : avm(st), string("") , val(NULL), command(""), type(_int8) { }
+AbstarctVM::AbstarctVM(std::stack<IOperand*> &st) : avm(st), string(""), command(""), type(_int8) { }
 
 AbstarctVM::AbstarctVM(AbstarctVM const & a) : avm(a.avm) { *this = a; }
 
@@ -21,14 +21,11 @@ AbstarctVM::~AbstarctVM(void) { }
 AbstarctVM & AbstarctVM::operator=(AbstarctVM const & rhs) {
 	avm = rhs.getStack();
 	string = rhs.getString();
-	val = rhs.getVal();
 	command = rhs.getCommand();
 	type = rhs.getType();
 	return (*this); }
 
 std::string AbstarctVM::getString() const { return (string); }
-
-IOperand* AbstarctVM::getVal() const { return (val); }
 
 std::string AbstarctVM::getCommand() const { return (command); }
 
@@ -38,22 +35,59 @@ std::stack<IOperand*> AbstarctVM::getStack() const { return (avm); }
 
 IOperand const * AbstarctVM::createOperand() const
 {
-	int val = std::stoi(string);
-	switch (type)
+	try
 	{
-		case _int8 :
-			return (new Operand<int8_t>(static_cast<int8_t>(val), 0, type));
-		default :
-			std::cout << "sobaka" << std::endl;
+		switch (type)
+		{
+			case _int8 : return (new Operand<int8_t>(static_cast<int8_t>(std::stoi(string)), 0, type));
+			case _int16 : return (new Operand<int16_t>(static_cast<int16_t>(std::stoi(string)), 0, type));
+			case _int32 : return (new Operand<int32_t>(static_cast<int32_t>(std::stoi(string)), 0, type));
+			case _float : return (new Operand<float>(std::stof(string.c_str(), NULL), 0, type));
+			case _double : return (new Operand<double>(std::stod(string), 0, type));
+		}
+	}
+	catch (std::exception & e)
+	{
+		throw std::invalid_argument("Overflow on a value");
 	}
 	return (NULL);
 }
 
-void AbstarctVM::aply_instructions()
+void AbstarctVM::apply_instructions()
 {
-	IOperand const * lol = createOperand();
 	if (command == "push")
-		avm.push(const_cast<IOperand*>(lol));
+		avm.push(const_cast<IOperand*>(createOperand()));
+	else if (command == "pop")
+	{
+		try
+		{
+			avm.pop();
+		}
+		catch (std::exception & e)
+		{
+			throw std::invalid_argument("can't pop on empty stack");
+		}
+	}
+	else if (command == "assert")
+	{
+		avm.empty() ? throw std::invalid_argument("can't assert on empty stack") : 0;
+		IOperand * &tmp = avm.top();
+		type != tmp->getType() || string != tmp->toString() ?
+			throw std::invalid_argument("assert instruction is not true") : 0;
+	}
+	else if (command == "dump")
+	{
+		avm.empty() ? throw std::invalid_argument("can't dump on empty stack") : 0;
+		std::stack<IOperand*> tmp = avm;
+		while(!tmp.empty())
+		{
+			IOperand * pointer = tmp.top();
+			std::cout << pointer->toString() << std::endl;
+			tmp.pop();
+		}
+
+			
+	}
 	else
 		std::cout << "lalka" << std::endl;
 }
@@ -67,49 +101,54 @@ void AbstarctVM::parse_string(void)
     std::string					str3("0123456789.");
 
 
-    if (string == ";;")
+    if (string == ";;" || string == "")
     	return;
+
     while (std::getline(iss, token, ' '))
     	tokens.push_back(token);
-    if (tokens.size() != 2)
-		throw std::invalid_argument("avm: instruction is unknown");
-	else if (str1.find(tokens[0]) == std::string::npos || tokens[0].find(" ") != std::string::npos)
-		throw std::invalid_argument("avm: wrong command");
-	else
-		command = tokens[0];
+	str1.find(tokens[0]) == std::string::npos || tokens[0].find(" ") != std::string::npos ?
+		throw std::invalid_argument("wrong command") : 0;
+	command = tokens[0];
 
-	size_t	iter = 0;
-	size_t	iter2 = 0;
-	if ((iter = tokens[1].find("(")) == std::string::npos ||
-		(iter2 = tokens[1].find(")")) == std::string::npos || iter2 + 1 != tokens[1].size())
-		throw std::invalid_argument("avm: wrong type");
-	else
+	if (command != "push" && command != "assert")
+    	tokens.size() != 1 ? throw std::invalid_argument("instruction is unknown") : 0;
+    else
 	{
-		std::string t;
-		t = tokens[1].substr(0, iter);
-		if (t == "int8" )
+		tokens.size() != 2  ?	throw std::invalid_argument("instruction is unknown") : 0;
+		size_t	iter = 0;
+		size_t	iter2 = 0;
+		((iter = tokens[1].find("(")) == std::string::npos ||
+		(iter2 = tokens[1].find(")")) == std::string::npos ||
+		iter2 + 1 != tokens[1].size()) ? 
+			throw std::invalid_argument("error ()") : 0;
+
+		std::string tmp;
+		tmp = tokens[1].substr(0, iter);
+		if (tmp == "int8" )
 			type = _int8;
-		else if (t == "int16")
+		else if (tmp == "int16")
 			type = _int16;
-		else if (t == "int32")
+		else if (tmp == "int32")
 			type = _int32;
-		else if (t == "float")
+		else if (tmp == "float")
 			type = _float;
-		else if (t == "double")
+		else if (tmp == "double")
 			type = _double;
 		else
-			throw std::invalid_argument("avm: wrong type");
-	}
-	string = tokens[1].substr(iter + 1, iter2 - iter - 1);
+			throw std::invalid_argument("wrong type(1)");
+		string = tokens[1].substr(iter + 1, iter2 - iter - 1);
 
-	int a = 0;
-	for (size_t i = 0; i < string.length(); i++)
-	{
-		string[i] == '.' ? a++ : 0;
-		if (str3.find(string[i]) == std::string::npos || a == 2)
-			throw std::invalid_argument("avm: wrong symbol in number");
+		int a = 0;
+		for (size_t i = 0; i < string.length(); i++)
+		{
+			string[i] == '.' ? a++ : 0;
+			if (string[0] == '.' || str3.find(string[i]) == std::string::npos || a == 2)
+				throw std::invalid_argument("wrong symbol in number");
+		}
+		a && (type == _int8 || type == _int16 || type == _int32) ? throw std::invalid_argument("discrepancy type with number") : 0;
 	}
-	aply_instructions();
+
+	apply_instructions();
 }
 
 
@@ -125,11 +164,11 @@ int AbstarctVM::read_file(std::string const &name){
 
 	std::ifstream file(name);
 	if (!file.is_open() || !file.good())
-		throw std::invalid_argument("avm: No such file or directory");
+		throw std::invalid_argument("No such file or directory");
 	if (stat(name.c_str(), &ifreg) == -1)
-		throw std::invalid_argument("avm: Is a directory");
+		throw std::invalid_argument("Is a directory");
 	if (!(ifreg.st_mode & S_IFREG))
-		throw std::invalid_argument("avm: wrong stat");
+		throw std::invalid_argument("wrong stat");
 	str << file.rdbuf();
 	string =  str.str();
 	file.close();

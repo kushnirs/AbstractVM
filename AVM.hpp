@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AVM.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
+/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:42 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/11 20:37:20 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/12 12:51:42 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ class AbstarctVM
 	private:
 		std::stack<IOperand*>	&avm;
 		std::string				string;
-		IOperand				*val;
 		std::string				command;
 		eOperandType			type;
 		void		parse_string();
@@ -35,7 +34,6 @@ class AbstarctVM
 		~AbstarctVM(void);
 		AbstarctVM & operator=(AbstarctVM const & rhs);
 
-		IOperand*				getVal() const ;
 		std::string 			getString() const ;
 		std::string 			getCommand() const ;
 		eOperandType 			getType() const ;
@@ -43,7 +41,7 @@ class AbstarctVM
 
 		void				read_std_in();
 		int					read_file(std::string const &name);
-		void				aply_instructions();
+		void				apply_instructions();
 		IOperand const *	createOperand(void) const;
 };
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
+/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:32:22 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/11 11:23:02 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/12 12:06:37 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ int main(int ac, char **av)
 	std::stack<IOperand*> avm;
 	AbstarctVM	cat(avm);
 
+	int counter = 1;
 	try
 	{
 		while (cat.getString() != ";;")
@@ -32,11 +33,12 @@ int main(int ac, char **av)
 				}
 				else if (cat.read_file(av[1]))
 					break;
+				counter++;
 		}
 	}
 	catch (std::exception & e)
 	{
-		std::cout << e.what() << std::endl;
+		std::cout << "avm: " << "line " << counter << " Error : " << e.what() << std::endl;
 	}
 	return (0);
 }
