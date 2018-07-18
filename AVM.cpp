@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AVM.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
+/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:44 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/13 17:03:24 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/18 17:16:08 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,13 +96,70 @@ void AbstarctVM::apply_instructions()
 		{
 			IOperand * pointer = tmp.top();
 			std::string const & str = pointer->toString();
-			// std::cout << str << std::endl;
 			message.append(str);
+			message += "\n";
 			delete &str;
 			tmp.pop();
-		}
-
-			
+		}	
+	}
+	else if (command == "add")
+	{
+		std::stack<IOperand*> tmp = avm;
+		tmp.pop();
+		IOperand const *lol1 = *(avm.top()) + *(tmp.top());
+		avm.pop();
+		avm.pop();
+		avm.push(const_cast<IOperand*>(lol1));
+	}
+	else if (command == "add")
+	{
+		avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
+		std::stack<IOperand*> tmp = avm;
+		tmp.pop();
+		IOperand const *lol1 = *(avm.top()) + *(tmp.top());
+		avm.pop();
+		avm.pop();
+		avm.push(const_cast<IOperand*>(lol1));
+	}
+	else if (command == "sub")
+	{
+		avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
+		std::stack<IOperand*> tmp = avm;
+		tmp.pop();
+		IOperand const *lol1 = *(avm.top()) - *(tmp.top());
+		avm.pop();
+		avm.pop();
+		avm.push(const_cast<IOperand*>(lol1));
+	}
+	else if (command == "mul")
+	{
+		avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
+		std::stack<IOperand*> tmp = avm;
+		tmp.pop();
+		IOperand const *lol1 = *(avm.top()) * *(tmp.top());
+		avm.pop();
+		avm.pop();
+		avm.push(const_cast<IOperand*>(lol1));
+	}
+	else if (command == "div")
+	{
+		avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
+		std::stack<IOperand*> tmp = avm;
+		tmp.pop();
+		IOperand const *lol1 = *(avm.top()) / *(tmp.top());
+		avm.pop();
+		avm.pop();
+		avm.push(const_cast<IOperand*>(lol1));
+	}
+	else if (command == "print")
+	{
+		avm.empty() ? throw std::invalid_argument("can't assert on empty stack") : 0;
+		IOperand * &tmp = avm.top();
+		std::string a = tmp->toString();
+		tmp->getType() == _float || tmp->getType() == _double || stoi(a) < 0 || stoi(a) > 255  ?
+			throw std::invalid_argument("assert instruction is not true") : 0;
+		message += static_cast<char>(stoi(a));
+		message += "\n";
 	}
 }
 
@@ -173,6 +230,7 @@ void AbstarctVM::read_std_in()
 }
 
 int AbstarctVM::read_file(std::string const &name){
+    std::string 		token;
 	struct stat			ifreg;
 	std::stringstream	str;
 
@@ -184,8 +242,10 @@ int AbstarctVM::read_file(std::string const &name){
 	if (!(ifreg.st_mode & S_IFREG))
 		throw std::invalid_argument("wrong stat");
 	str << file.rdbuf();
-	string =  str.str();
+	token =  str.str();
+    std::istringstream	iss(token);
 	file.close();
-	parse_string();
+	while (std::getline(iss, string, '\n'))
+		parse_string();
 	return (-1);
 }
