@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AVM.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:42 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/12 12:51:42 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/13 15:54:08 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,18 @@ class AbstarctVM
 {
 	private:
 		std::stack<IOperand*>	&avm;
+		std::string				&message;
 		std::string				string;
 		std::string				command;
 		eOperandType			type;
 		void		parse_string();
 	public:
-		AbstarctVM(std::stack<IOperand*> &st);
+		AbstarctVM(std::stack<IOperand*> &st, std::string &msg);
 		AbstarctVM(AbstarctVM const & a);
 		~AbstarctVM(void);
 		AbstarctVM & operator=(AbstarctVM const & rhs);
 
+		std::string 			getMesssage() const;
 		std::string 			getString() const ;
 		std::string 			getCommand() const ;
 		eOperandType 			getType() const ;

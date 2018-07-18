@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   AVM.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:44 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/12 14:01:53 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/13 17:03:24 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "AVM.hpp"
 
-AbstarctVM::AbstarctVM(std::stack<IOperand*> &st) : avm(st), string(""), command(""), type(_int8) { }
+AbstarctVM::AbstarctVM(std::stack<IOperand*> &st, std::string &msg) : avm(st), message(msg), string(""), command(""), type(_int8) { }
 
-AbstarctVM::AbstarctVM(AbstarctVM const & a) : avm(a.avm) { *this = a; }
+AbstarctVM::AbstarctVM(AbstarctVM const & a) : avm(a.avm), message(a.message) { *this = a; }
 
 AbstarctVM::~AbstarctVM(void) { }
 
@@ -24,6 +24,8 @@ AbstarctVM & AbstarctVM::operator=(AbstarctVM const & rhs) {
 	command = rhs.getCommand();
 	type = rhs.getType();
 	return (*this); }
+
+std::string AbstarctVM::getMesssage() const { return (message); }
 
 std::string AbstarctVM::getString() const { return (string); }
 
@@ -39,8 +41,18 @@ IOperand const * AbstarctVM::createOperand() const
 	{
 		switch (type)
 		{
-			case _int8 : return (new Operand<int8_t>(static_cast<int8_t>(std::stoi(string)), 0, type));
-			case _int16 : return (new Operand<int16_t>(static_cast<int16_t>(std::stoi(string)), 0, type));
+			case _int8 :
+			{
+				int res = std::stoi(string); res < -127 || res > 127 ?
+					throw std::invalid_argument("Overflow on a value") : 0;
+				return (new Operand<int8_t>(static_cast<int8_t>(res), 0, type));
+			}
+			case _int16 :
+			{
+				int res = std::stoi(string); res < -32768 || res > 32767 ?
+					throw std::invalid_argument("Overflow on a value") : 0;
+				return (new Operand<int16_t>(static_cast<int16_t>(res), 0, type));
+			}
 			case _int32 : return (new Operand<int32_t>(static_cast<int32_t>(std::stoi(string)), 0, type));
 			case _float : return (new Operand<float>(std::stof(string.c_str(), NULL), 0, type));
 			case _double : return (new Operand<double>(std::stod(string), 0, type));
@@ -50,7 +62,6 @@ IOperand const * AbstarctVM::createOperand() const
 	{
 		throw std::invalid_argument("Overflow on a value");
 	}
-	return (NULL);
 }
 
 void AbstarctVM::apply_instructions()
@@ -72,8 +83,10 @@ void AbstarctVM::apply_instructions()
 	{
 		avm.empty() ? throw std::invalid_argument("can't assert on empty stack") : 0;
 		IOperand * &tmp = avm.top();
-		type != tmp->getType() || string != tmp->toString() ?
+		std::string const & str = tmp->toString();
+		type != tmp->getType() || string != str ?
 			throw std::invalid_argument("assert instruction is not true") : 0;
+		delete &str;
 	}
 	else if (command == "dump")
 	{
@@ -82,14 +95,15 @@ void AbstarctVM::apply_instructions()
 		while(!tmp.empty())
 		{
 			IOperand * pointer = tmp.top();
-			std::cout << pointer->toString() << std::endl;
+			std::string const & str = pointer->toString();
+			// std::cout << str << std::endl;
+			message.append(str);
+			delete &str;
 			tmp.pop();
 		}
 
 			
 	}
-	else
-		std::cout << "lalka" << std::endl;
 }
 
 void AbstarctVM::parse_string(void)
