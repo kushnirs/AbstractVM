@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AVM.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:42 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/18 16:54:14 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/19 20:53:18 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,22 @@ class AbstarctVM
 		std::string				string;
 		std::string				command;
 		eOperandType			type;
-		void		parse_string();
+
+		void				parser(bool inp);
+		bool				parse_command(std::string str);
+		void				parse_value(bool comment, std::vector<std::string> & tokens);
+		void				apply_instr();
+		IOperand const *	createOperand(void) const;
+
+		void	Push();
+		void	Pop();
+		void	Assert();
+		void	Dump();
+		void	Add();
+		void	Sub();
+		void	Mul();
+		void	Div();
+		void	Print();
 	public:
 		AbstarctVM(std::stack<IOperand*> &st, std::string &msg);
 		AbstarctVM(AbstarctVM const & a);
@@ -43,8 +58,6 @@ class AbstarctVM
 
 		void				read_std_in();
 		int					read_file(std::string const &name);
-		void				apply_instructions();
-		IOperand const *	createOperand(void) const;
 };
 
 # endif

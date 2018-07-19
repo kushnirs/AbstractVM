@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   AVM.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:44 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/18 17:16:08 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/19 20:53:05 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include  <unordered_map>
 #include "AVM.hpp"
+// Canonical form
 
 AbstarctVM::AbstarctVM(std::stack<IOperand*> &st, std::string &msg) : avm(st), message(msg), string(""), command(""), type(_int8) { }
 
@@ -25,6 +27,10 @@ AbstarctVM & AbstarctVM::operator=(AbstarctVM const & rhs) {
 	type = rhs.getType();
 	return (*this); }
 
+// Canonical form
+
+// Get func
+
 std::string AbstarctVM::getMesssage() const { return (message); }
 
 std::string AbstarctVM::getString() const { return (string); }
@@ -34,6 +40,98 @@ std::string AbstarctVM::getCommand() const { return (command); }
 eOperandType AbstarctVM::getType() const { return (type); }
 
 std::stack<IOperand*> AbstarctVM::getStack() const { return (avm); }
+
+// Get func
+
+// Operations
+
+void AbstarctVM::Push() { avm.push(const_cast<IOperand*>(createOperand())); }
+
+void AbstarctVM::Pop() {
+	try
+	{
+		avm.pop();
+	}
+	catch (std::exception & e)
+	{
+		throw std::invalid_argument("can't pop on empty stack");
+	}
+}
+
+void AbstarctVM::Assert() {
+	avm.empty() ? throw std::invalid_argument("can't assert on empty stack") : 0;
+	IOperand * &tmp = avm.top();
+	std::string const & str = tmp->toString();
+	type != tmp->getType() || string != str ?
+		throw std::invalid_argument("assert instruction is not true") : 0;
+	delete &str;
+}
+
+void AbstarctVM::Dump() {
+	avm.empty() ? throw std::invalid_argument("can't dump on empty stack") : 0;
+	std::stack<IOperand*> tmp = avm;
+	while(!tmp.empty())
+	{
+		IOperand * pointer = tmp.top();
+		std::string const & str = pointer->toString();
+		message.append(str);
+		message += "\n";
+		delete &str;
+		tmp.pop();
+	}	
+}
+
+void AbstarctVM::Add() {
+	avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
+	std::stack<IOperand*> tmp = avm;
+	tmp.pop();
+	IOperand const *lol1 = *(avm.top()) + *(tmp.top());
+	avm.pop();
+	avm.pop();
+	avm.push(const_cast<IOperand*>(lol1));
+}
+
+void AbstarctVM::Sub() {
+	avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
+	std::stack<IOperand*> tmp = avm;
+	tmp.pop();
+	IOperand const *lol1 = *(avm.top()) - *(tmp.top());
+	avm.pop();
+	avm.pop();
+	avm.push(const_cast<IOperand*>(lol1));
+}
+
+void AbstarctVM::Mul() {
+	avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
+	std::stack<IOperand*> tmp = avm;
+	tmp.pop();
+	IOperand const *lol1 = *(avm.top()) * *(tmp.top());
+	avm.pop();
+	avm.pop();
+	avm.push(const_cast<IOperand*>(lol1));
+}
+
+void AbstarctVM::Div() {
+	avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
+	std::stack<IOperand*> tmp = avm;
+	tmp.pop();
+	IOperand const *lol1 = *(avm.top()) / *(tmp.top());
+	avm.pop();
+	avm.pop();
+	avm.push(const_cast<IOperand*>(lol1));
+}
+
+void AbstarctVM::Print() {
+	avm.empty() ? throw std::invalid_argument("can't assert on empty stack") : 0;
+	IOperand * &tmp = avm.top();
+	std::string a = tmp->toString();
+	tmp->getType() == _float || tmp->getType() == _double || stoi(a) < 0 || stoi(a) > 255  ?
+		throw std::invalid_argument("assert instruction is not true") : 0;
+	message += static_cast<char>(stoi(a));
+	message += "\n";
+}
+
+// Operations
 
 IOperand const * AbstarctVM::createOperand() const
 {
@@ -64,134 +162,46 @@ IOperand const * AbstarctVM::createOperand() const
 	}
 }
 
-void AbstarctVM::apply_instructions()
+void AbstarctVM::apply_instr()
 {
-	if (command == "push")
-		avm.push(const_cast<IOperand*>(createOperand()));
-	else if (command == "pop")
+	std::string	str_action[9] =	{ "push", "pop", "assert", "dump", "add", "sub", "mul", "div", "print"};
+	void (AbstarctVM::*action[9])() =
 	{
-		try
-		{
-			avm.pop();
-		}
-		catch (std::exception & e)
-		{
-			throw std::invalid_argument("can't pop on empty stack");
-		}
-	}
-	else if (command == "assert")
-	{
-		avm.empty() ? throw std::invalid_argument("can't assert on empty stack") : 0;
-		IOperand * &tmp = avm.top();
-		std::string const & str = tmp->toString();
-		type != tmp->getType() || string != str ?
-			throw std::invalid_argument("assert instruction is not true") : 0;
-		delete &str;
-	}
-	else if (command == "dump")
-	{
-		avm.empty() ? throw std::invalid_argument("can't dump on empty stack") : 0;
-		std::stack<IOperand*> tmp = avm;
-		while(!tmp.empty())
-		{
-			IOperand * pointer = tmp.top();
-			std::string const & str = pointer->toString();
-			message.append(str);
-			message += "\n";
-			delete &str;
-			tmp.pop();
-		}	
-	}
-	else if (command == "add")
-	{
-		std::stack<IOperand*> tmp = avm;
-		tmp.pop();
-		IOperand const *lol1 = *(avm.top()) + *(tmp.top());
-		avm.pop();
-		avm.pop();
-		avm.push(const_cast<IOperand*>(lol1));
-	}
-	else if (command == "add")
-	{
-		avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
-		std::stack<IOperand*> tmp = avm;
-		tmp.pop();
-		IOperand const *lol1 = *(avm.top()) + *(tmp.top());
-		avm.pop();
-		avm.pop();
-		avm.push(const_cast<IOperand*>(lol1));
-	}
-	else if (command == "sub")
-	{
-		avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
-		std::stack<IOperand*> tmp = avm;
-		tmp.pop();
-		IOperand const *lol1 = *(avm.top()) - *(tmp.top());
-		avm.pop();
-		avm.pop();
-		avm.push(const_cast<IOperand*>(lol1));
-	}
-	else if (command == "mul")
-	{
-		avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
-		std::stack<IOperand*> tmp = avm;
-		tmp.pop();
-		IOperand const *lol1 = *(avm.top()) * *(tmp.top());
-		avm.pop();
-		avm.pop();
-		avm.push(const_cast<IOperand*>(lol1));
-	}
-	else if (command == "div")
-	{
-		avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
-		std::stack<IOperand*> tmp = avm;
-		tmp.pop();
-		IOperand const *lol1 = *(avm.top()) / *(tmp.top());
-		avm.pop();
-		avm.pop();
-		avm.push(const_cast<IOperand*>(lol1));
-	}
-	else if (command == "print")
-	{
-		avm.empty() ? throw std::invalid_argument("can't assert on empty stack") : 0;
-		IOperand * &tmp = avm.top();
-		std::string a = tmp->toString();
-		tmp->getType() == _float || tmp->getType() == _double || stoi(a) < 0 || stoi(a) > 255  ?
-			throw std::invalid_argument("assert instruction is not true") : 0;
-		message += static_cast<char>(stoi(a));
-		message += "\n";
-	}
+		&AbstarctVM::Push, &AbstarctVM::Pop, &AbstarctVM::Assert, &AbstarctVM::Dump,
+		&AbstarctVM::Add, &AbstarctVM::Sub, &AbstarctVM::Mul, &AbstarctVM::Div, &AbstarctVM::Print
+	};
+	for (int i = 0; i < 9; i++)
+		if (str_action[i] == command)
+			(this->*action[i])();
 }
 
-void AbstarctVM::parse_string(void)
+bool	AbstarctVM::parse_command(std::string str)
 {
-	std::vector<std::string> 	tokens;
-    std::istringstream			iss(string);
-    std::string 				token;
-    std::string					str1("push pop dump assert add sub mul div mod print exit");
-    std::string					str3("0123456789.");
-
-
-    if (string == ";;" || string == "")
-    	return;
-
-    while (std::getline(iss, token, ' '))
-    	tokens.push_back(token);
-	str1.find(tokens[0]) == std::string::npos || tokens[0].find(" ") != std::string::npos ?
+    std::string	str1("push pop dump assert add sub mul div mod print exit");
+    size_t		iter;
+    bool 		comment = (iter = str.find(";")) == std::string::npos ? 0 : 1;
+    str = str.substr(0,iter);
+	str1.find(str) == std::string::npos || ((str == "push" || str == "assert") && comment) ?
 		throw std::invalid_argument("wrong command") : 0;
-	command = tokens[0];
+	command = str;
+	return (comment);
+}
 
+void	AbstarctVM::parse_value(bool comment, std::vector<std::string> & tokens)
+{
+    std::string					str3("0123456789.");
+    
 	if (command != "push" && command != "assert")
-    	tokens.size() != 1 ? throw std::invalid_argument("instruction is unknown") : 0;
+    	!comment && tokens.size() > 1 && tokens[1][0] != ';' ?
+    		throw std::invalid_argument("instruction is unknown") : 0;
     else
 	{
-		tokens.size() != 2  ?	throw std::invalid_argument("instruction is unknown") : 0;
 		size_t	iter = 0;
 		size_t	iter2 = 0;
 		((iter = tokens[1].find("(")) == std::string::npos ||
 		(iter2 = tokens[1].find(")")) == std::string::npos ||
-		iter2 + 1 != tokens[1].size()) ? 
-			throw std::invalid_argument("error ()") : 0;
+		(tokens[1][iter2 + 1] != ';' && tokens.size() > 2 && tokens[2][0] != ';'))  ? 
+			throw std::invalid_argument("instruction is unknown(1)") : 0;
 
 		std::string tmp;
 		tmp = tokens[1].substr(0, iter);
@@ -218,15 +228,30 @@ void AbstarctVM::parse_string(void)
 		}
 		a && (type == _int8 || type == _int16 || type == _int32) ? throw std::invalid_argument("discrepancy type with number") : 0;
 	}
+}
 
-	apply_instructions();
+void AbstarctVM::parser(bool inp)
+{
+	std::vector<std::string> 	tokens;
+    std::istringstream			iss(string);
+    std::string 				token;
+
+    string == ";;" && !inp ? throw std::invalid_argument("illegal ;;") : 0;
+
+    if (string == ";;" || string == "" || string[0] == ';')
+    	return;
+
+    while (std::getline(iss, token, ' '))
+    	tokens.push_back(token);
+	parse_value(parse_command(tokens[0]), tokens);
+	apply_instr();
 }
 
 
 void AbstarctVM::read_std_in()
 {
 	std::getline(std::cin, string);
-	parse_string();
+	parser(true);
 }
 
 int AbstarctVM::read_file(std::string const &name){
@@ -246,6 +271,6 @@ int AbstarctVM::read_file(std::string const &name){
     std::istringstream	iss(token);
 	file.close();
 	while (std::getline(iss, string, '\n'))
-		parse_string();
+		parser(false);
 	return (-1);
 }

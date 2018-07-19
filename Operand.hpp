@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Operand.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/20 19:21:40 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/18 17:23:08 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/19 14:31:04 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,14 @@
 
 #include "IOperand.hpp"
 
-typedef struct s_val
+union t_val
 {
-    union
-    {
-        int8_t	Value8;
-        int16_t	Value16;
-        int32_t	Value32;
-        float	floatValue;
-        double	doubleValue;
-    };
-}t_val;
+	int8_t	Value8;
+	int16_t	Value16;
+	int32_t	Value32;
+	float	floatValue;
+	double	doubleValue;
+};
 
 template < typename T>
 T	operation(T const & a, T const & b, char equals)
