@@ -3,32 +3,44 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+         #
+#    By: sergee <sergee@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/04/02 10:58:17 by skushnir          #+#    #+#              #
-#    Updated: 2018/07/12 09:32:22 by skushnir         ###   ########.fr        #
+#    Updated: 2018/07/20 00:33:45 by sergee           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME		= avm
+NAME		=	avm
 
-CC			= clang++
+CC			=	clang++
 
-CFLAGS		= -Wall -Wextra -Werror -std=c++11
+CFLAGS		=	-Wall -Wextra -Werror -std=c++11
 
-SRC			= main.cpp AVM.cpp
+HDRSDIR		=	./includes
 
-OBJ			= $(SRC:.cpp=.o)
+HDRS		=	$(addprefix $(HDRSDIR)/, IOperand.hpp Operand.hpp AVM.hpp)
+
+SRCSDIR		=	./sources
+
+SRCS		=	main.cpp AVM.cpp
+
+OBJDIR		=	./obj
+
+OBJ			=	$(addprefix $(OBJDIR)/, $(SRCS:.cpp=.o))
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
+$(NAME): $(OBJDIR) $(OBJ) $(HDRS)
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJ)
 
-$(OBJ): %.o : %.cpp
-	$(CC) $(CFLAGS) -c $< 
+$(OBJDIR):
+	@mkdir $@
+
+$(OBJ): $(OBJDIR)/%.o : $(SRCSDIR)/%.cpp $(HDRS)
+	@$(CC) $(CFLAGS) -c $< -o $@ -I./includes
+
 clean:
-	rm -f $(OBJ)
+	@rm -rf $(OBJDIR)
 
 fclean: clean
 	rm -f $(NAME)
