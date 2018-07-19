@@ -6,7 +6,7 @@
 /*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:32:22 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/13 16:28:01 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/19 23:53:10 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,24 +15,24 @@
 
 int main(int ac, char **av)
 {
-	std::stack<IOperand*> 	avm;
+	std::stack<IOperand*> 	stack;
 	std::string				message;
-	AbstarctVM				cat(avm, message);
+	AbstarctVM				virt(stack, message);
 
 	int counter = 1;
 	try
 	{
 		std::string exit;
-		while ((exit = cat.getString()) != ";;")
+		while ((exit = virt.getString()) != ";;")
 		{
 			if (ac == 1)
-				cat.read_std_in();
+				virt.read_std_in();
 			else if (ac > 2)
 			{
 				std::cout << "avm: too much arguments" << std::endl;
 				return (-1);
 			}
-			else if (cat.read_file(av[1]))
+			else if (virt.read_file(av[1]))
 				break;
 			counter++;
 		}

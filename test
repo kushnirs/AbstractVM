@@ -1,5 +1,4 @@
-push float(10) dgf
+push float(10)
 push int8(21)
 div
 dump
-exit
