@@ -1,4 +1,11 @@
-push float(10)
-push int8(21)
-div
+push int8(7)
+push int8(42)
+push int8(5)
+push int8(3)
 dump
+avg
+push int8(45)
+print
+print
+print
+exit

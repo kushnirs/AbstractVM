@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AVM.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
+/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:44 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/20 00:10:24 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/20 17:05:21 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,44 +52,31 @@ std::stack<IOperand*> AbstarctVM::getStack() const { return (avm); }
 
 IOperand const * AbstarctVM::createOperand() const
 {
-	try
+	switch (type)
 	{
-		switch (type)
+		case _int8 :
 		{
-			case _int8 :
-			{
-				int res = std::stoi(string); res < -127 || res > 127 ?
-					throw std::invalid_argument("Overflow on a value") : 0;
-				return (new Operand<int8_t>(static_cast<int8_t>(res), 0, type));
-			}
-			case _int16 :
-			{
-				int res = std::stoi(string); res < -32768 || res > 32767 ?
-					throw std::invalid_argument("Overflow on a value") : 0;
-				return (new Operand<int16_t>(static_cast<int16_t>(res), 0, type));
-			}
-			case _int32 : return (new Operand<int32_t>(static_cast<int32_t>(std::stoi(string)), 0, type));
-			case _float : return (new Operand<float>(std::stof(string.c_str(), NULL), 0, type));
-			case _double : return (new Operand<double>(std::stod(string), 0, type));
+			int res = std::stoi(string); res < -127 || res > 127 ?
+				throw std::invalid_argument("Overflow on a value") : 0;
+			return (new Operand<int8_t>(static_cast<int8_t>(res), 0, type));
 		}
-	}
-	catch (std::exception & e)
-	{
-		throw std::invalid_argument("Overflow on a value");
+		case _int16 :
+		{
+			int res = std::stoi(string); res < -32768 || res > 32767 ?
+				throw std::invalid_argument("Overflow on a value") : 0;
+			return (new Operand<int16_t>(static_cast<int16_t>(res), 0, type));
+		}
+		case _int32 : return (new Operand<int32_t>(static_cast<int32_t>(std::stoi(string)), 0, type));
+		case _float : return (new Operand<float>(std::strtof(string.c_str(), NULL), 0, type));
+		case _double : return (new Operand<double>(std::strtod(string.c_str(), NULL), 0, type));
 	}
 }
 
 void AbstarctVM::Push() { avm.push(const_cast<IOperand*>(createOperand())); }
 
 void AbstarctVM::Pop() {
-	try
-	{
-		avm.pop();
-	}
-	catch (std::exception & e)
-	{
-		throw std::invalid_argument("can't pop on empty stack");
-	}
+	avm.empty() ? throw std::invalid_argument( "can't pop on empty stack") : 0;
+	avm.pop();
 }
 
 void AbstarctVM::Assert() {
@@ -112,7 +99,7 @@ void AbstarctVM::Dump() {
 		message += "\n";
 		delete &str;
 		tmp.pop();
-	}	
+	}
 }
 
 void AbstarctVM::Add() {
@@ -156,13 +143,14 @@ void AbstarctVM::Div() {
 }
 
 void AbstarctVM::Print() {
-	avm.empty() ? throw std::invalid_argument("can't assert on empty stack") : 0;
-	IOperand * &tmp = avm.top();
-	std::string a = tmp->toString();
-	tmp->getType() == _float || tmp->getType() == _double || stoi(a) < 0 || stoi(a) > 255  ?
+	avm.empty() ? throw std::invalid_argument("can't print on empty stack") : 0;
+	IOperand * tmp = avm.top();
+	std::string const & a = tmp->toString();
+	tmp->getType() == _float || tmp->getType() == _double || std::stoi(a) < 0 || std::stoi(a) > 255  ?
 		throw std::invalid_argument("assert instruction is not true") : 0;
-	message += static_cast<char>(stoi(a));
+	message += static_cast<char>(std::stoi(a));
 	message += "\n";
+	delete &a;
 }
 
 // Operations
@@ -244,17 +232,24 @@ void AbstarctVM::parser(bool inp)
     std::istringstream			iss(string);
     std::string 				token;
 
-    string == ";;" && !inp ? throw std::invalid_argument("illegal ;;") : 0;
-    exit && inp && string != ";;" ? throw std::invalid_argument("after 'exit' command must be ';;' command") : 0;
-    exit && !inp ? throw std::invalid_argument("after 'exit' command mustn't be another one") : 0;
-    if (string == "" || string[0] == ';')
-    	return;
-    while (std::getline(iss, token, ' '))
-    	tokens.push_back(token);
-	parse_value(parse_command(tokens[0]), tokens);
-	if (command == "exit")
-		exit = true;
-	apply_instr();
+    try
+    {
+		string == ";;" && !inp ? throw std::invalid_argument("illegal ;;") : 0;
+		exit && inp && string != ";;" ? throw std::invalid_argument("after 'exit' command must be ';;' command") : 0;
+		exit && !inp ? throw std::invalid_argument("after 'exit' command mustn't be another one") : 0;
+		if (string == "" || string[0] == ';')
+			return;
+		while (std::getline(iss, token, ' '))
+			tokens.push_back(token);
+		parse_value(parse_command(tokens[0]), tokens);
+		if (command == "exit")
+			exit = true;
+		apply_instr();
+	}
+	catch (std::exception & e)
+	{
+		std::cout << e.what() << std::endl;
+	}
 }
 
 // Parser

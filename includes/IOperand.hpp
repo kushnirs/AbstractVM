@@ -6,7 +6,7 @@
 /*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/20 17:33:58 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/12 10:09:18 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/20 17:12:03 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,10 @@
 # define IOPERAND_HPP
 
 #include <iostream>
+#include <sys/stat.h>
+#include <sstream>
+#include <fstream>
+#include <string>
 #include <stdexcept>
 #include <vector>
 #include <stack>

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AVM.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
+/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:42 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/19 23:50:05 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/20 17:11:51 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 #ifndef AVM_HPP
 # define AVM_HPP
 
-#include <sys/stat.h>
-#include <sstream>
-#include <fstream>
 #include "IOperand.hpp"
 #include "Operand.hpp"
 
