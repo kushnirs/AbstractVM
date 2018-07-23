@@ -6,7 +6,7 @@
 /*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/20 19:21:40 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/23 19:49:04 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/23 20:08:50 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,19 +155,8 @@ IOperand const *	Operand<T>::operator%( IOperand const & rhs) const { return (ca
 
 template < typename T>
 std::string const & Operand<T>::toString( void ) const {
-	// char tmp[50];
-	// std::map<eOperandType, const char *> Mymap({
-	// 	{_int8, "%hhd"},
-	// 	{_int16, "%hd"},
-	// 	{_int32, "%d"},
-	// 	{_float, "%f"},
-	// 	{_double, "%f"}
-	// });
-	// sprintf(tmp, Mymap[type] , value);
-	// std::cout << tmp << std::endl;
 	std::stringstream ss;
 	ss << std::fixed << std::setprecision(precision) << value;
-	return(*(new std::string(ss.str())));
-}
+	return(*(new std::string(ss.str()))); }
 
 #endif
