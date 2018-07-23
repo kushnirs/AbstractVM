@@ -6,7 +6,7 @@
 /*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:42 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/20 17:11:51 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/23 15:44:06 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ class AbstarctVM
 		std::string				string;
 		std::string				command;
 		eOperandType			type;
-		bool					exit;
+		bool					ex;
 
 		void				parser(bool inp);
 		bool				parse_command(std::string str);

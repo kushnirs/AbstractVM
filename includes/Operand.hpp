@@ -6,14 +6,15 @@
 /*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/20 19:21:40 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/20 17:33:20 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/23 19:49:04 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef OPERAND_HPP
 #define OPERAND_HPP
 
-#include <stdio.h>
+#include <iomanip>
+#include <map>
 #include "IOperand.hpp"
 
 union t_val
@@ -30,7 +31,7 @@ class Operand : public IOperand
 {
 	private:
 		T				value;
-		int				presicion;
+		int				precision;
 		eOperandType	type;
 	public:
 		IOperand const *	castType(IOperand const & second, char equals) const;
@@ -78,7 +79,7 @@ K	back_value(IOperand const & b, K type)
 }
 
 template < typename T>
-Operand<T>::Operand(T && val, int pres, eOperandType t) : value(val), presicion(pres), type(t) {  }
+Operand<T>::Operand(T && val, int pres, eOperandType t) : value(val), precision(pres), type(t) {  }
 
 template < typename T>
 Operand<T>::Operand(Operand<T> & a) { *this = a; }
@@ -87,7 +88,7 @@ template < typename T>
 Operand<T> & Operand<T>::operator = (Operand & arr)
 {
 	value = arr.getValue();
-	presicion = arr.getPrecision();
+	precision = arr.getPrecision();
 	type = arr.getType();
 	return (*this);
 }
@@ -132,7 +133,7 @@ template < typename T>
 T 					Operand<T>::getValue(void) const { return(value); }
 
 template < typename T>
-int					Operand<T>::getPrecision( void ) const { return(presicion); }
+int					Operand<T>::getPrecision( void ) const { return(precision); }
 
 template < typename T>
 eOperandType		Operand<T>::getType( void ) const { return(type);}
@@ -153,6 +154,20 @@ template < typename T>
 IOperand const *	Operand<T>::operator%( IOperand const & rhs) const { return (castType(rhs, '%')); }
 
 template < typename T>
-std::string const & Operand<T>::toString( void ) const { std::string *tmp = new std::string(std::to_string(value)); return(*tmp); }
+std::string const & Operand<T>::toString( void ) const {
+	// char tmp[50];
+	// std::map<eOperandType, const char *> Mymap({
+	// 	{_int8, "%hhd"},
+	// 	{_int16, "%hd"},
+	// 	{_int32, "%d"},
+	// 	{_float, "%f"},
+	// 	{_double, "%f"}
+	// });
+	// sprintf(tmp, Mymap[type] , value);
+	// std::cout << tmp << std::endl;
+	std::stringstream ss;
+	ss << std::fixed << std::setprecision(precision) << value;
+	return(*(new std::string(ss.str())));
+}
 
 #endif

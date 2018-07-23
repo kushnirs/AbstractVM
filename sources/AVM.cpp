@@ -6,12 +6,13 @@
 /*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:44 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/20 17:05:21 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/23 20:03:45 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include  <unordered_map>
 #include "AVM.hpp"
+
+extern int counter;
 
 // Canonical form
 
@@ -56,19 +57,29 @@ IOperand const * AbstarctVM::createOperand() const
 	{
 		case _int8 :
 		{
-			int res = std::stoi(string); res < -127 || res > 127 ?
+			int res = std::stoi(string);
+			res < -127 || res > 127 ?
 				throw std::invalid_argument("Overflow on a value") : 0;
 			return (new Operand<int8_t>(static_cast<int8_t>(res), 0, type));
 		}
 		case _int16 :
 		{
-			int res = std::stoi(string); res < -32768 || res > 32767 ?
+			int res = std::stoi(string);
+			res < -32768 || res > 32767 ?
 				throw std::invalid_argument("Overflow on a value") : 0;
 			return (new Operand<int16_t>(static_cast<int16_t>(res), 0, type));
 		}
-		case _int32 : return (new Operand<int32_t>(static_cast<int32_t>(std::stoi(string)), 0, type));
-		case _float : return (new Operand<float>(std::strtof(string.c_str(), NULL), 0, type));
-		case _double : return (new Operand<double>(std::strtod(string.c_str(), NULL), 0, type));
+		case _int32 :
+		{
+			int res = std::stoi(string);
+			res < -2147483648 || res > 2147483647 ?
+				throw std::invalid_argument("Overflow on a value") : 0;
+			return (new Operand<int32_t>(static_cast<int32_t>(res), 0, type));
+		}
+		case _float :
+			return (new Operand<float>(std::strtof(string.c_str(), NULL), string.size() - string.find(".") - 1, type));
+		case _double :
+			return (new Operand<double>(std::strtod(string.c_str(), NULL), string.size() - string.find(".") - 1, type));
 	}
 }
 
@@ -83,7 +94,7 @@ void AbstarctVM::Assert() {
 	avm.empty() ? throw std::invalid_argument("can't assert on empty stack") : 0;
 	IOperand * &tmp = avm.top();
 	std::string const & str = tmp->toString();
-	type != tmp->getType() || string != str ?
+	type != tmp->getType() || std::to_string(std::stof(string)) != str ?
 		throw std::invalid_argument("assert instruction is not true") : 0;
 	delete &str;
 }
@@ -95,11 +106,20 @@ void AbstarctVM::Dump() {
 	{
 		IOperand * pointer = tmp.top();
 		std::string const & str = pointer->toString();
-		message.append(str);
-		message += "\n";
+		message.append(str + "\n");
 		delete &str;
 		tmp.pop();
 	}
+}
+
+void AbstarctVM::Print() {
+	avm.empty() ? throw std::invalid_argument("can't print on empty stack") : 0;
+	IOperand * tmp = avm.top();
+	std::string const & a = tmp->toString();
+	tmp->getType() != _int8   ?
+		throw std::invalid_argument("print instruction is not true") : 0;
+	message += a;
+	delete &a;
 }
 
 void AbstarctVM::Add() {
@@ -142,16 +162,6 @@ void AbstarctVM::Div() {
 	avm.push(const_cast<IOperand*>(lol1));
 }
 
-void AbstarctVM::Print() {
-	avm.empty() ? throw std::invalid_argument("can't print on empty stack") : 0;
-	IOperand * tmp = avm.top();
-	std::string const & a = tmp->toString();
-	tmp->getType() == _float || tmp->getType() == _double || std::stoi(a) < 0 || std::stoi(a) > 255  ?
-		throw std::invalid_argument("assert instruction is not true") : 0;
-	message += static_cast<char>(std::stoi(a));
-	message += "\n";
-	delete &a;
-}
 
 // Operations
 
@@ -185,17 +195,19 @@ bool	AbstarctVM::parse_command(std::string str)
 
 void	AbstarctVM::parse_value(bool comment, std::vector<std::string> & tokens)
 {
-    std::string					str3("0123456789.");
+    std::string					str3("0123456789.-");
 
 	if (command != "push" && command != "assert")
     	!comment && tokens.size() > 1 && tokens[1][0] != ';' ?
     		throw std::invalid_argument("instruction is unknown") : 0;
     else
 	{
+		tokens.size() < 2 ? throw std::invalid_argument("instruction is unknown") : 0;
 		size_t	iter = 0;
 		size_t	iter2 = 0;
 		((iter = tokens[1].find("(")) == std::string::npos ||
 		(iter2 = tokens[1].find(")")) == std::string::npos ||
+		(tokens.size() == 2 && (tokens[1][iter2 + 1] != ';' && tokens[1][iter2 + 1] != 0)) ||
 		(tokens[1][iter2 + 1] != ';' && tokens.size() > 2 && tokens[2][0] != ';'))  ? 
 			throw std::invalid_argument("instruction is unknown(1)") : 0;
 
@@ -219,7 +231,7 @@ void	AbstarctVM::parse_value(bool comment, std::vector<std::string> & tokens)
 		for (size_t i = 0; i < string.length(); i++)
 		{
 			string[i] == '.' ? a++ : 0;
-			if (string[0] == '.' || str3.find(string[i]) == std::string::npos || a == 2)
+			if ((string[i] == '-' && i) || string[0] == '.' || str3.find(string[i]) == std::string::npos || a == 2)
 				throw std::invalid_argument("wrong symbol in number");
 		}
 		a && (type == _int8 || type == _int16 || type == _int32) ? throw std::invalid_argument("discrepancy type with number") : 0;
@@ -235,20 +247,22 @@ void AbstarctVM::parser(bool inp)
     try
     {
 		string == ";;" && !inp ? throw std::invalid_argument("illegal ;;") : 0;
-		exit && inp && string != ";;" ? throw std::invalid_argument("after 'exit' command must be ';;' command") : 0;
-		exit && !inp ? throw std::invalid_argument("after 'exit' command mustn't be another one") : 0;
+		if (string == ";;" && inp && !ex)
+			exit(printf("before ';;' must be 'exit' command\n"));
+		ex && inp && string != ";;" ? throw std::invalid_argument("after 'exit' command must be ';;' command") : 0;
+		ex && !inp ? throw std::invalid_argument("after 'exit' command mustn't be another one") : 0;
 		if (string == "" || string[0] == ';')
 			return;
 		while (std::getline(iss, token, ' '))
 			tokens.push_back(token);
 		parse_value(parse_command(tokens[0]), tokens);
 		if (command == "exit")
-			exit = true;
+			ex = true;
 		apply_instr();
 	}
 	catch (std::exception & e)
 	{
-		std::cout << e.what() << std::endl;
+		std::cout << "avm: Line " << ::counter << " Error : " << e.what() << std::endl;
 	}
 }
 
@@ -279,9 +293,9 @@ int AbstarctVM::read_file(std::string const &name){
 	token =  str.str();
     std::istringstream	iss(token);
 	file.close();
-	while (std::getline(iss, string, '\n'))
+	while (std::getline(iss, string, '\n') && counter++)
 		parser(false);
-	!exit ? throw std::invalid_argument("can't finish without 'exit' command") : 0;
+	!ex ? throw std::invalid_argument("can't finish without 'exit' command") : 0;
 	return (-1);
 }
 

@@ -6,12 +6,14 @@
 /*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:32:22 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/20 16:37:31 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/23 17:43:06 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "IOperand.hpp"
 #include "AVM.hpp"
+
+int	counter(1);
 
 int main(int ac, char **av)
 {
@@ -19,7 +21,6 @@ int main(int ac, char **av)
 	std::string				message;
 	AbstarctVM				virt(stack, message);
 
-	int counter = 1;
 	try
 	{
 		std::string exit;
@@ -36,11 +37,11 @@ int main(int ac, char **av)
 				break;
 			counter++;
 		}
-		std::cout << message << std::endl;
+		std::cout << message;
 	}
 	catch (std::exception & e)
 	{
-		std::cout << "avm: " << "line " << counter << " Error : " << e.what() << std::endl;
+		std::cout << "avm: " << "Line " << ::counter << " Error : " << e.what() << std::endl;
 	}
 	return (0);
 }
