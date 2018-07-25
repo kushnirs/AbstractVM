@@ -1,11 +1,12 @@
-push int8(110) ; 'n'
-push int8(101) ; 'e'
-push int8(115) ; 's'
-push int8(116) ; 't'
-push int8(105) ; 'i'
 push int8(114) ; 'r'
-push int8(103) ; 'g'
-push int8(112) ; 'p'
+push int8(105) ; 'i'
+add
+push int8(110) ; 'n'
+push int8(104) ; 'h'
+push int8(115) ; 's'
+push int8(117) ; 'u'
+push int8(107) ; 'k'
+push int8(115) ; 's'
 push int8(32) ; ' '
 push int8(45) ; '-'
 push int8(32) ; ' '
@@ -21,5 +22,49 @@ push int8(84) ; 'T'
 push int8(73) ; 'I'
 push int8(78) ; 'N'
 push int8(85) ; 'U'
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
+print
+pop
 dump
 exit

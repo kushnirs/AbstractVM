@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:32:22 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/23 17:43:06 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/25 18:01:37 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,6 @@ int main(int ac, char **av)
 	{
 		std::cout << "avm: " << "Line " << ::counter << " Error : " << e.what() << std::endl;
 	}
+	system("leaks avm");
 	return (0);
 }

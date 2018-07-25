@@ -6,7 +6,7 @@
 #    By: sergee <sergee@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/04/02 10:58:17 by skushnir          #+#    #+#              #
-#    Updated: 2018/07/20 00:33:45 by sergee           ###   ########.fr        #
+#    Updated: 2018/07/25 14:43:55 by sergee           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME		=	avm
 
 CC			=	clang++
 
-CFLAGS		=	-Wall -Wextra -Werror -std=c++11
+CFLAGS		=	-Wall -Wextra -Werror -std=c++1z
 
 HDRSDIR		=	./includes
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Operand.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/20 19:21:40 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/23 20:08:50 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/25 17:54:33 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ class Operand : public IOperand
 		std::string const & toString( void ) const;
 		Operand(T && val, int pres, eOperandType t);
 		Operand(Operand<T> & a);
-		~Operand( void );
+		virtual ~Operand( void );
 		Operand<T> & operator = (Operand & arr);
 };
 
@@ -155,8 +155,20 @@ IOperand const *	Operand<T>::operator%( IOperand const & rhs) const { return (ca
 
 template < typename T>
 std::string const & Operand<T>::toString( void ) const {
-	std::stringstream ss;
-	ss << std::fixed << std::setprecision(precision) << value;
-	return(*(new std::string(ss.str()))); }
+	// std::stringstream ss;
+	// ss << std::fixed << std::setprecision(precision) << value;
+	// std::map<eOperandType, const char *> flag({
+	// 	{ _int8, "hhd"},
+	// 	{ _int16, "hd"},
+	// 	{ _int32, "d"},
+	// 	{ _float, "g"},
+	// 	{ _double, "g"},
+	// })
+	// char * str;
+	// return(*(new std::string(std::to_string(value))));
+	// std::shared_ptr<std::string> lol(new std::string(std::to_string(value)));
+	// std::cout << *lol << std::endl;
+	return(*(new std::string(std::to_string(value))));
+}
 
 #endif

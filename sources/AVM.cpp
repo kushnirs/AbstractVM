@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AVM.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:44 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/23 20:03:45 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/25 17:47:42 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,11 +92,12 @@ void AbstarctVM::Pop() {
 
 void AbstarctVM::Assert() {
 	avm.empty() ? throw std::invalid_argument("can't assert on empty stack") : 0;
-	IOperand * &tmp = avm.top();
-	std::string const & str = tmp->toString();
-	type != tmp->getType() || std::to_string(std::stof(string)) != str ?
+	IOperand * &pointer = avm.top();
+	std::unique_ptr<IOperand> obj(const_cast<IOperand*>(createOperand()));
+	std::unique_ptr<std::string> str1(const_cast<std::string*>(&(pointer->toString())));
+	std::unique_ptr<std::string> str2(const_cast<std::string*>(&(obj->toString())));
+	type != pointer->getType() || *str1 != *str2 ?
 		throw std::invalid_argument("assert instruction is not true") : 0;
-	delete &str;
 }
 
 void AbstarctVM::Dump() {
@@ -105,21 +106,19 @@ void AbstarctVM::Dump() {
 	while(!tmp.empty())
 	{
 		IOperand * pointer = tmp.top();
-		std::string const & str = pointer->toString();
-		message.append(str + "\n");
-		delete &str;
+		std::unique_ptr<std::string> str(const_cast<std::string*>(&(pointer->toString())));
+		*(message.end() - 1) != '\n' ?  message.append("\n" + *str + "\n") : message.append(*str + "\n");
 		tmp.pop();
 	}
 }
 
 void AbstarctVM::Print() {
 	avm.empty() ? throw std::invalid_argument("can't print on empty stack") : 0;
-	IOperand * tmp = avm.top();
-	std::string const & a = tmp->toString();
-	tmp->getType() != _int8   ?
+	IOperand * pointer = avm.top();
+	std::unique_ptr<std::string> str(const_cast<std::string*>(&(pointer->toString())));
+	pointer->getType() != _int8   ?
 		throw std::invalid_argument("print instruction is not true") : 0;
-	message += a;
-	delete &a;
+	message += static_cast<char>(std::stoi(*str));
 }
 
 void AbstarctVM::Add() {
