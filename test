@@ -1,6 +1,5 @@
 push int8(114) ; 'r'
 push int8(105) ; 'i'
-add
 push int8(110) ; 'n'
 push int8(104) ; 'h'
 push int8(115) ; 's'
@@ -26,6 +25,7 @@ print
 pop
 print
 pop
+;;
 print
 pop
 print
@@ -66,5 +66,6 @@ print
 pop
 print
 pop
-dump
+print
+pop
 exit

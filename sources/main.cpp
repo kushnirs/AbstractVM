@@ -6,7 +6,7 @@
 /*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:32:22 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/25 18:01:37 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/25 18:27:06 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	counter(1);
 
 int main(int ac, char **av)
 {
-	std::stack<IOperand*> 	stack;
+	std::stack<std::shared_ptr<const IOperand>> 	stack;
 	std::string				message;
 	AbstarctVM				virt(stack, message);
 

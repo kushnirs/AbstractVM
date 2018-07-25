@@ -6,7 +6,7 @@
 /*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:44 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/25 17:47:42 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/25 18:49:54 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ extern int counter;
 
 // Canonical form
 
-AbstarctVM::AbstarctVM(std::stack<IOperand*> &st, std::string &msg) :
+AbstarctVM::AbstarctVM(std::stack<std::shared_ptr<const IOperand>> &st, std::string &msg) :
 	avm(st), message(msg), string(""), command(""), type(_int8) { }
 
 AbstarctVM::AbstarctVM(AbstarctVM const & a) :
@@ -44,7 +44,7 @@ std::string AbstarctVM::getCommand() const { return (command); }
 
 eOperandType AbstarctVM::getType() const { return (type); }
 
-std::stack<IOperand*> AbstarctVM::getStack() const { return (avm); }
+std::stack<std::shared_ptr<const IOperand>> AbstarctVM::getStack() const { return (avm); }
 
 // Get func
 
@@ -83,7 +83,7 @@ IOperand const * AbstarctVM::createOperand() const
 	}
 }
 
-void AbstarctVM::Push() { avm.push(const_cast<IOperand*>(createOperand())); }
+void AbstarctVM::Push() { avm.push(std::shared_ptr<const IOperand>(createOperand())); }
 
 void AbstarctVM::Pop() {
 	avm.empty() ? throw std::invalid_argument( "can't pop on empty stack") : 0;
@@ -92,21 +92,22 @@ void AbstarctVM::Pop() {
 
 void AbstarctVM::Assert() {
 	avm.empty() ? throw std::invalid_argument("can't assert on empty stack") : 0;
-	IOperand * &pointer = avm.top();
-	std::unique_ptr<IOperand> obj(const_cast<IOperand*>(createOperand()));
-	std::unique_ptr<std::string> str1(const_cast<std::string*>(&(pointer->toString())));
-	std::unique_ptr<std::string> str2(const_cast<std::string*>(&(obj->toString())));
-	type != pointer->getType() || *str1 != *str2 ?
+	std::shared_ptr<const IOperand> obj1 = avm.top();
+	std::shared_ptr<const IOperand> obj2(createOperand());
+
+	std::shared_ptr< const std::string> str1(&(obj1->toString()));
+	std::shared_ptr< const std::string> str2(&(obj2->toString()));
+
+	type != obj1->getType() || *str1 != *str2 ?
 		throw std::invalid_argument("assert instruction is not true") : 0;
 }
 
 void AbstarctVM::Dump() {
 	avm.empty() ? throw std::invalid_argument("can't dump on empty stack") : 0;
-	std::stack<IOperand*> tmp = avm;
+	std::stack<std::shared_ptr<const IOperand>> tmp = avm;
 	while(!tmp.empty())
 	{
-		IOperand * pointer = tmp.top();
-		std::unique_ptr<std::string> str(const_cast<std::string*>(&(pointer->toString())));
+		std::shared_ptr< const std::string> str(&(tmp.top()->toString()));
 		*(message.end() - 1) != '\n' ?  message.append("\n" + *str + "\n") : message.append(*str + "\n");
 		tmp.pop();
 	}
@@ -114,51 +115,47 @@ void AbstarctVM::Dump() {
 
 void AbstarctVM::Print() {
 	avm.empty() ? throw std::invalid_argument("can't print on empty stack") : 0;
-	IOperand * pointer = avm.top();
-	std::unique_ptr<std::string> str(const_cast<std::string*>(&(pointer->toString())));
-	pointer->getType() != _int8   ?
+	std::shared_ptr<const IOperand> obj = avm.top();
+	std::shared_ptr< const std::string> str(&(obj->toString()));
+	obj->getType() != _int8   ?
 		throw std::invalid_argument("print instruction is not true") : 0;
 	message += static_cast<char>(std::stoi(*str));
 }
 
 void AbstarctVM::Add() {
 	avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
-	std::stack<IOperand*> tmp = avm;
-	tmp.pop();
-	IOperand const *lol1 = *(avm.top()) + *(tmp.top());
+	std::shared_ptr<const IOperand> obj1 = avm.top();
 	avm.pop();
+	std::shared_ptr<const IOperand> obj2 = avm.top();
 	avm.pop();
-	avm.push(const_cast<IOperand*>(lol1));
+	avm.push(std::shared_ptr<const IOperand>(*obj1 + *obj2));
 }
 
 void AbstarctVM::Sub() {
 	avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
-	std::stack<IOperand*> tmp = avm;
-	tmp.pop();
-	IOperand const *lol1 = *(avm.top()) - *(tmp.top());
+	std::shared_ptr<const IOperand> obj1 = avm.top();
 	avm.pop();
+	std::shared_ptr<const IOperand> obj2 = avm.top();
 	avm.pop();
-	avm.push(const_cast<IOperand*>(lol1));
+	avm.push(std::shared_ptr<const IOperand>(*obj1 + *obj2));
 }
 
 void AbstarctVM::Mul() {
 	avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
-	std::stack<IOperand*> tmp = avm;
-	tmp.pop();
-	IOperand const *lol1 = *(avm.top()) * *(tmp.top());
+	std::shared_ptr<const IOperand> obj1 = avm.top();
 	avm.pop();
+	std::shared_ptr<const IOperand> obj2 = avm.top();
 	avm.pop();
-	avm.push(const_cast<IOperand*>(lol1));
+	avm.push(std::shared_ptr<const IOperand>(*obj1 + *obj2));
 }
 
 void AbstarctVM::Div() {
 	avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
-	std::stack<IOperand*> tmp = avm;
-	tmp.pop();
-	IOperand const *lol1 = *(avm.top()) / *(tmp.top());
+	std::shared_ptr<const IOperand> obj1 = avm.top();
 	avm.pop();
+	std::shared_ptr<const IOperand> obj2 = avm.top();
 	avm.pop();
-	avm.push(const_cast<IOperand*>(lol1));
+	avm.push(std::shared_ptr<const IOperand>(*obj1 + *obj2));
 }
 
 

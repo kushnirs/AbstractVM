@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AVM.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:42 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/23 15:44:06 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/25 18:27:02 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 class AbstarctVM
 {
 	private:
-		std::stack<IOperand*>	&avm;
+		std::stack<std::shared_ptr<const IOperand>>	&avm;
 		std::string				&message;
 		std::string				string;
 		std::string				command;
@@ -43,7 +43,7 @@ class AbstarctVM
 		void	Div();
 		void	Print();
 	public:
-		AbstarctVM(std::stack<IOperand*> &st, std::string &msg);
+		AbstarctVM(std::stack<std::shared_ptr<const IOperand>> &st, std::string &msg);
 		AbstarctVM(AbstarctVM const & a);
 		~AbstarctVM(void);
 		AbstarctVM & operator=(AbstarctVM const & rhs);
@@ -52,7 +52,7 @@ class AbstarctVM
 		std::string 			getString() const ;
 		std::string 			getCommand() const ;
 		eOperandType 			getType() const ;
-		std::stack<IOperand*>	getStack() const;
+		std::stack<std::shared_ptr<const IOperand>>	getStack() const;
 
 		void				read_std_in();
 		int					read_file(std::string const &name);
