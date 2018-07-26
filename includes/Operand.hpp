@@ -6,7 +6,7 @@
 /*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/20 19:21:40 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/26 19:11:40 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/26 21:03:25 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,36 +85,45 @@ template < typename T>
 Operand<T>::Operand(std::string str, int pres, eOperandType t) : precision(pres), type(t)
 {
 	t_val	tmp;
-	switch (type)
+	try
 	{
-		case _int8 :
-			tmp.Value32 = std::stoi(str);
-			tmp.Value32 < std::numeric_limits<int8_t>::min() || tmp.Value32 > std::numeric_limits<int8_t>::max() ?
-				throw std::invalid_argument("Overflow on a value(1)") : 0;
-			value = static_cast<int8_t>(tmp.Value32);
-			break;
-		case _int16 :
-			tmp.Value32 = std::stoi(str);
-			tmp.Value32 < std::numeric_limits<int16_t>::min() || tmp.Value32 > std::numeric_limits<int16_t>::max() ?
-				throw std::invalid_argument("Overflow on a value(1)") : 0;
-			value = static_cast<int16_t>(tmp.Value32);
-			break;
-		case _int32 :
-			tmp.Value32 = std::stoi(str);
-			value = tmp.Value32;
-			break;
-		case _float :
-			tmp.floatValue = std::stof(str);
-			tmp.floatValue < std::numeric_limits<float>::min() || tmp.floatValue > std::numeric_limits<float>::max() ?
-				throw std::invalid_argument("Overflow on a value(1)") : 0;
-			value = tmp.floatValue;
-			break;
-		case _double :
-			tmp.doubleValue = std::stod(str);
-			tmp.doubleValue < std::numeric_limits<double>::min() || tmp.doubleValue > std::numeric_limits<double>::max() ?
-				throw std::invalid_argument("Overflow on a value(1)") : 0;
-			value = tmp.doubleValue;
-			break;
+		switch (type)
+		{
+			case _int8 :
+				tmp.Value32 = std::stoi(str);
+				tmp.Value32 < std::numeric_limits<int8_t>::min() || tmp.Value32 > std::numeric_limits<int8_t>::max() ?
+					throw std::invalid_argument("Overflow on a value(1)") : 0;
+				value = static_cast<int8_t>(tmp.Value32);
+				break;
+			case _int16 :
+				tmp.Value32 = std::stoi(str);
+				tmp.Value32 < std::numeric_limits<int16_t>::min() || tmp.Value32 > std::numeric_limits<int16_t>::max() ?
+					throw std::invalid_argument("Overflow on a value(1)") : 0;
+				value = static_cast<int16_t>(tmp.Value32);
+				break;
+			case _int32 :
+				tmp.Value32 = std::stoi(str);
+				tmp.Value32 == std::numeric_limits<int32_t>::min() || tmp.Value32 == std::numeric_limits<int32_t>::max() ?
+					throw std::invalid_argument("Overflow on a value(1)") : 0;
+				value = tmp.Value32;
+				break;
+			case _float :
+				tmp.floatValue = std::stof(str);
+				tmp.floatValue == std::numeric_limits<float>::min() || tmp.floatValue == std::numeric_limits<float>::max() ?
+					throw std::invalid_argument("Overflow on a value(1)") : 0;
+				value = tmp.floatValue;
+				break;
+			case _double :
+				tmp.doubleValue = std::stod(str);
+				tmp.doubleValue == std::numeric_limits<double>::min() || tmp.doubleValue == std::numeric_limits<double>::max() ?
+					throw std::invalid_argument("Overflow on a value(1)") : 0;
+				value = tmp.doubleValue;
+				break;
+		}
+	}
+	catch (std::exception & e)
+	{
+		throw std::invalid_argument("Overflow on a value(1)");
 	}
 }
 
@@ -169,7 +178,7 @@ IOperand const *	Operand<T>::castType(IOperand const & second, char equals) cons
 	}
 	catch (std::exception & e)
 	{
-		std::cout << "avm: Line " << ::counter << " Error : Overflow on a value"<< std::endl;
+		std::cout << "avm: Line " << ::counter << " Error : " << e.what()<< std::endl;
 		return (NULL);
 	}
 }
@@ -218,8 +227,6 @@ std::string const & Operand<T>::toString( void ) const {
 	std::stringstream ss;
 	ss << std::fixed << std::setprecision(precision) << (type == _int8 ? static_cast<int16_t>(value) : value);
 	return(*(new std::string(ss.str())));
-	
-	// return(*(new std::string(std::to_string(value))));
 }
 
 #endif

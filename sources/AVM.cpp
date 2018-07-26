@@ -6,7 +6,7 @@
 /*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:44 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/26 19:19:19 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/26 21:05:49 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ IOperand const * AbstarctVM::createOperand() const
 	}
 	catch (std::exception & e)
 	{
-		std::cout << "avm: Line " << ::counter << " Error : Overflow on a value"<< std::endl;
+		std::cout << "avm: Line " << ::counter << " Error :" << e.what()<< std::endl;
 		return (NULL);
 	}
 }
@@ -105,7 +105,7 @@ void AbstarctVM::Dump() {
 	while(!tmp.empty())
 	{
 		std::shared_ptr< const std::string> str(&(tmp.top()->toString()));
-		*(message.end() - 1) != '\n' ?  message.append("\n" + *str + "\n") : message.append(*str + "\n");
+		*(message.end() - 1) != '\n' && message.size()?  message.append("\n" + *str + "\n") : message.append(*str + "\n");
 		tmp.pop();
 	}
 }
