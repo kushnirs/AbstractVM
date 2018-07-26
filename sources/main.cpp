@@ -3,17 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
+/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:32:22 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/26 12:54:28 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/26 17:03:52 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "IOperand.hpp"
 #include "AVM.hpp"
-
-int	counter(1);
 
 int main(int ac, char **av)
 {

@@ -68,24 +68,21 @@ pop
 print
 pop
 
-push int32(2147483647)
-push int32(3)
-add
+push int32(2147483648)
 push int32(-2147483649)
 
 push int16(32768)
-push int16(-32769)
+push int16(-32770)
 
-push int8(-128)
-push int8(128)
+push int8(-129)
+push int8(129)
 
-push float(21474836)
-push int8(0)
-push float(214749)
+push float(214748362147483621474836214748362147483621474836)
+push float(-214748362147483621474836214748362147483621474836)
 
-push float(214749)
-push float(0)
-mod
+push int8(127.2)
+push int16(lol)
+push int32(123.2)
 
 dump
 exit

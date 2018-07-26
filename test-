@@ -1,5 +1,5 @@
 push int8(127) ; 'r'
-push int8(1) ; 'i'
+push int8(2) ; 'i'
 add
 dump
 exit
