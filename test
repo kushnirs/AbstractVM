@@ -25,7 +25,6 @@ print
 pop
 print
 pop
-;;
 print
 pop
 print
@@ -68,4 +67,25 @@ print
 pop
 print
 pop
+
+push int32(2147483647)
+push int32(3)
+add
+push int32(-2147483649)
+
+push int16(32768)
+push int16(-32769)
+
+push int8(-128)
+push int8(128)
+
+push float(21474836)
+push int8(0)
+push float(214749)
+
+push float(214749)
+push float(0)
+mod
+
+dump
 exit

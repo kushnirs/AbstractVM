@@ -1,0 +1,5 @@
+push int8(127) ; 'r'
+push int8(1) ; 'i'
+add
+dump
+exit

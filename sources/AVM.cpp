@@ -6,7 +6,7 @@
 /*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:44 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/25 18:49:54 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/26 13:15:23 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,15 @@ extern int counter;
 
 // Canonical form
 
-AbstarctVM::AbstarctVM(std::stack<std::shared_ptr<const IOperand>> &st, std::string &msg) :
-	avm(st), message(msg), string(""), command(""), type(_int8) { }
+AbstarctVM::AbstarctVM() : message(""), string(""), command(""), type(_int8) { }
 
-AbstarctVM::AbstarctVM(AbstarctVM const & a) :
-	avm(a.avm), message(a.message) { *this = a; }
+AbstarctVM::AbstarctVM(AbstarctVM const & a) { *this = a; }
 
 AbstarctVM::~AbstarctVM(void) { }
 
 AbstarctVM & AbstarctVM::operator=(AbstarctVM const & rhs) {
 	avm = rhs.getStack();
+	message = rhs.getMesssage();
 	string = rhs.getString();
 	command = rhs.getCommand();
 	type = rhs.getType();
@@ -53,37 +52,43 @@ std::stack<std::shared_ptr<const IOperand>> AbstarctVM::getStack() const { retur
 
 IOperand const * AbstarctVM::createOperand() const
 {
-	switch (type)
+	try
 	{
-		case _int8 :
+		switch (type)
 		{
-			int res = std::stoi(string);
-			res < -127 || res > 127 ?
-				throw std::invalid_argument("Overflow on a value") : 0;
-			return (new Operand<int8_t>(static_cast<int8_t>(res), 0, type));
+			case _int8 :
+			{
+				int res = std::stoi(string);
+				res < -127 || res > 127 ?
+					throw std::invalid_argument("Overflow on a value") : 0;
+				return (new Operand<int8_t>(static_cast<int8_t>(res), 0, type));
+			}
+			case _int16 :
+			{
+				int res = std::stoi(string);
+				res < -32768 || res > 32767 ?
+					throw std::invalid_argument("Overflow on a value") : 0;
+				return (new Operand<int16_t>(static_cast<int16_t>(res), 0, type));
+			}
+			case _int32 :
+				return (new Operand<int32_t>(static_cast<int32_t>(std::stoi(string)), 0, type));
+			case _float :
+				return (new Operand<float>(std::strtof(string.c_str(), NULL), string.size() - string.find(".") - 1, type));
+			case _double :
+				return (new Operand<double>(std::strtod(string.c_str(), NULL), string.size() - string.find(".") - 1, type));
 		}
-		case _int16 :
-		{
-			int res = std::stoi(string);
-			res < -32768 || res > 32767 ?
-				throw std::invalid_argument("Overflow on a value") : 0;
-			return (new Operand<int16_t>(static_cast<int16_t>(res), 0, type));
-		}
-		case _int32 :
-		{
-			int res = std::stoi(string);
-			res < -2147483648 || res > 2147483647 ?
-				throw std::invalid_argument("Overflow on a value") : 0;
-			return (new Operand<int32_t>(static_cast<int32_t>(res), 0, type));
-		}
-		case _float :
-			return (new Operand<float>(std::strtof(string.c_str(), NULL), string.size() - string.find(".") - 1, type));
-		case _double :
-			return (new Operand<double>(std::strtod(string.c_str(), NULL), string.size() - string.find(".") - 1, type));
 	}
+	catch (std::invalid_argument & e)
+	{
+		std::cout << "avm: Line " << ::counter << " Error : Overflow on a value"<< std::endl;
+	}
+	return (NULL);
 }
 
-void AbstarctVM::Push() { avm.push(std::shared_ptr<const IOperand>(createOperand())); }
+void AbstarctVM::Push() {
+	IOperand const * tmp = createOperand();
+	if (tmp)
+		avm.push(std::shared_ptr<const IOperand>(tmp)); }
 
 void AbstarctVM::Pop() {
 	avm.empty() ? throw std::invalid_argument( "can't pop on empty stack") : 0;
@@ -123,7 +128,7 @@ void AbstarctVM::Print() {
 }
 
 void AbstarctVM::Add() {
-	avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
+	avm.size() < 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
 	std::shared_ptr<const IOperand> obj1 = avm.top();
 	avm.pop();
 	std::shared_ptr<const IOperand> obj2 = avm.top();
@@ -132,30 +137,39 @@ void AbstarctVM::Add() {
 }
 
 void AbstarctVM::Sub() {
-	avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
+	avm.size() < 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
 	std::shared_ptr<const IOperand> obj1 = avm.top();
 	avm.pop();
 	std::shared_ptr<const IOperand> obj2 = avm.top();
 	avm.pop();
-	avm.push(std::shared_ptr<const IOperand>(*obj1 + *obj2));
+	avm.push(std::shared_ptr<const IOperand>(*obj1 - *obj2));
 }
 
 void AbstarctVM::Mul() {
-	avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
+	avm.size() < 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
 	std::shared_ptr<const IOperand> obj1 = avm.top();
 	avm.pop();
 	std::shared_ptr<const IOperand> obj2 = avm.top();
 	avm.pop();
-	avm.push(std::shared_ptr<const IOperand>(*obj1 + *obj2));
+	avm.push(std::shared_ptr<const IOperand>(*obj1 * *obj2));
 }
 
 void AbstarctVM::Div() {
-	avm.size() != 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
+	avm.size() < 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
 	std::shared_ptr<const IOperand> obj1 = avm.top();
 	avm.pop();
 	std::shared_ptr<const IOperand> obj2 = avm.top();
 	avm.pop();
-	avm.push(std::shared_ptr<const IOperand>(*obj1 + *obj2));
+	avm.push(std::shared_ptr<const IOperand>(*obj1 / *obj2));
+}
+
+void AbstarctVM::Mod() {
+	avm.size() < 2 ? throw std::invalid_argument("in stack < 2 numbers") : 0;
+	std::shared_ptr<const IOperand> obj1 = avm.top();
+	avm.pop();
+	std::shared_ptr<const IOperand> obj2 = avm.top();
+	avm.pop();
+	avm.push(std::shared_ptr<const IOperand>(*obj1 % *obj2));
 }
 
 
@@ -166,13 +180,13 @@ void AbstarctVM::Div() {
 
 void AbstarctVM::apply_instr()
 {
-	std::string	str_action[9] =	{ "push", "pop", "assert", "dump", "add", "sub", "mul", "div", "print"};
-	void (AbstarctVM::*action[9])() =
+	std::string	str_action[10] =	{ "push", "pop", "assert", "dump", "add", "sub", "mul", "div", "print", "mod"};
+	void (AbstarctVM::*action[10])() =
 	{
 		&AbstarctVM::Push, &AbstarctVM::Pop, &AbstarctVM::Assert, &AbstarctVM::Dump,
-		&AbstarctVM::Add, &AbstarctVM::Sub, &AbstarctVM::Mul, &AbstarctVM::Div, &AbstarctVM::Print
+		&AbstarctVM::Add, &AbstarctVM::Sub, &AbstarctVM::Mul, &AbstarctVM::Div, &AbstarctVM::Print, &AbstarctVM::Mod
 	};
-	for (int i = 0; i < 9; i++)
+	for (int i = 0; i < 10; i++)
 		if (str_action[i] == command)
 			(this->*action[i])();
 }
@@ -256,7 +270,7 @@ void AbstarctVM::parser(bool inp)
 			ex = true;
 		apply_instr();
 	}
-	catch (std::exception & e)
+	catch (std::invalid_argument & e)
 	{
 		std::cout << "avm: Line " << ::counter << " Error : " << e.what() << std::endl;
 	}
@@ -293,6 +307,31 @@ int AbstarctVM::read_file(std::string const &name){
 		parser(false);
 	!ex ? throw std::invalid_argument("can't finish without 'exit' command") : 0;
 	return (-1);
+}
+
+void		AbstarctVM::start_vm(int ac, char **av)
+{
+	try
+	{
+		while (string != ";;")
+		{
+			if (ac == 1)
+				read_std_in();
+			else if (ac > 2)
+			{
+				std::cout << "avm: too much arguments" << std::endl;
+				return ;
+			}
+			else if (read_file(av[1]))
+				break;
+			counter++;
+		}
+		std::cout << message;
+	}
+	catch (std::invalid_argument & e)
+	{
+		std::cout << "avm: " << "Line " << ::counter << " Error : " << e.what() << std::endl;
+	}
 }
 
 // Read instr

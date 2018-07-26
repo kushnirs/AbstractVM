@@ -6,7 +6,7 @@
 /*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/20 19:21:40 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/25 17:54:33 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/26 13:18:50 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,8 @@ T	operation(T const & a, T const & b, char equals)
 		case '*':	return (b * a);
 		case '/':	a == 0 ? throw std::invalid_argument("division by 0") : 0;
 					return (b / a);
-		default :	return (static_cast<int>(a) % static_cast<int>(b));
+		default :	a == 0 ? throw std::invalid_argument("remainder by 0") : 0;
+			return (static_cast<int>(a) % static_cast<int>(b));
 	}
 }
 

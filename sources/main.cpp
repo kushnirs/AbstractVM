@@ -6,7 +6,7 @@
 /*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:32:22 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/25 18:27:06 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/26 12:54:28 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,32 +17,9 @@ int	counter(1);
 
 int main(int ac, char **av)
 {
-	std::stack<std::shared_ptr<const IOperand>> 	stack;
-	std::string				message;
-	AbstarctVM				virt(stack, message);
-
-	try
-	{
-		std::string exit;
-		while ((exit = virt.getString()) != ";;")
-		{
-			if (ac == 1)
-				virt.read_std_in();
-			else if (ac > 2)
-			{
-				std::cout << "avm: too much arguments" << std::endl;
-				return (-1);
-			}
-			else if (virt.read_file(av[1]))
-				break;
-			counter++;
-		}
-		std::cout << message;
-	}
-	catch (std::exception & e)
-	{
-		std::cout << "avm: " << "Line " << ::counter << " Error : " << e.what() << std::endl;
-	}
-	system("leaks avm");
+	AbstarctVM	virt;
+	
+	virt.start_vm(ac, av);
+	// system("leaks avm");
 	return (0);
 }
