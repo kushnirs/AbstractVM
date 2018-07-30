@@ -6,7 +6,7 @@
 /*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:44 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/27 12:18:36 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/30 19:39:52 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,6 +174,18 @@ void AbstarctVM::Mod() {
 		avm.push(std::shared_ptr<const IOperand>(tmp));
 }
 
+void AbstarctVM::Empty() {
+	avm.empty() ? throw std::invalid_argument("can't clear empty stack") : 0;
+	while(!avm.empty())
+		avm.pop();
+	*(message.end() - 1) != '\n' && message.size()?  message.append("\n stack cleared \n") : message.append("stac cleared \n");
+}
+
+void AbstarctVM::Stack_size() {
+	std::stringstream ss;
+	ss << "stack size = " << avm.size();
+	*(message.end() - 1) != '\n' && message.size()?  message.append("\n" + ss.str() + "\n") : message.append(ss.str() + "\n");
+}
 
 // Operations
 
@@ -182,20 +194,21 @@ void AbstarctVM::Mod() {
 
 void AbstarctVM::apply_instr()
 {
-	std::string	str_action[10] =	{ "push", "pop", "assert", "dump", "add", "sub", "mul", "div", "print", "mod"};
-	void (AbstarctVM::*action[10])() =
+	std::string	str_action[12] =	{ "push", "pop", "assert", "dump", "add", "sub", "mul", "div", "print", "mod", "empty", "size"};
+	void (AbstarctVM::*action[12])() =
 	{
 		&AbstarctVM::Push, &AbstarctVM::Pop, &AbstarctVM::Assert, &AbstarctVM::Dump,
-		&AbstarctVM::Add, &AbstarctVM::Sub, &AbstarctVM::Mul, &AbstarctVM::Div, &AbstarctVM::Print, &AbstarctVM::Mod
+		&AbstarctVM::Add, &AbstarctVM::Sub, &AbstarctVM::Mul, &AbstarctVM::Div,
+		&AbstarctVM::Print, &AbstarctVM::Mod, &AbstarctVM::Empty, &AbstarctVM::Stack_size
 	};
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 12; i++)
 		if (str_action[i] == command)
 			(this->*action[i])();
 }
 
 bool	AbstarctVM::parse_command(std::string str)
 {
-    std::string	str1("push pop dump assert add sub mul div mod print exit");
+    std::string	str1("push pop dump assert add sub mul div mod print exit empty size");
     size_t		iter;
     bool 		comment = (iter = str.find(";")) == std::string::npos ? 0 : 1;
     str = str.substr(0,iter);

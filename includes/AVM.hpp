@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AVM.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:42 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/26 18:46:23 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/30 19:27:45 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,9 @@ class AbstarctVM
 		void	Div();
 		void	Mod();
 		void	Print();
+		void	Empty();
+		void	Stack_size();
+
 	public:
 		AbstarctVM();
 		AbstarctVM(AbstarctVM const & a);
