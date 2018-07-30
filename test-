@@ -1,5 +1,5 @@
-push int8(27) ; 'r'
-push int8(2) ; 'i'
-add
+push float(6.3)
+push float(2)
+div
 dump
 exit

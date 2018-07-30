@@ -81,6 +81,7 @@ push float(214748362147483621474836214748362147483621474836)
 push float(-214748362147483621474836214748362147483621474836)
 
 push double(214748362147483621474836214748362147483621474836)
+push double(214748362147483621474836214748362147483621474836)
 push double(-214748362147483621474836214748362147483621474836)
 
 push int8(127.2)
@@ -89,6 +90,7 @@ push int32(123.2)
 
 push int32(32)
 push int32(22)
+assert int32(22)
 add
 
 push int16(32)
@@ -102,6 +104,24 @@ sub
 push double(-1003.12834)
 push float(-2003.12834)
 assert float(-2003.12834)
+
+push float(6.3)
+push float(2)
+div
+
+push float(6.444)
+push float(2)
+mul
+
+push float(6.444)
+push float(2)
+mod
+push double(6.444)
+push double(2)
+mod
+push int32(2)
+push int32(6)
+mod
 
 dump
 exit

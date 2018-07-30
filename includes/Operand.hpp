@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Operand.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/20 19:21:40 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/26 21:03:25 by skushnir         ###   ########.fr       */
+/*   Updated: 2018/07/30 12:56:19 by sergee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ extern int counter;
 union t_val
 {
 	long int	Value32;
-	float	floatValue;
-	double	doubleValue;
+	float		floatValue;
+	double		doubleValue;
 };
 
 template < typename T>
@@ -147,6 +147,7 @@ template < typename T>
 IOperand const *	Operand<T>::castType(IOperand const & second, char equals) const
 {
 	t_val tmp[2];
+	std::stringstream ss;
 	eOperandType t = type < second.getType() ? second.getType() : type;
 	try
 	{
@@ -168,12 +169,14 @@ IOperand const *	Operand<T>::castType(IOperand const & second, char equals) cons
 				equals == '%' ? throw std::invalid_argument("can't % with float") : 0;
 				tmp[0].floatValue = static_cast<float>(value);
 				tmp[1].floatValue = ::back_value<float>(second);
-				return (new Operand<float>(std::to_string(::operation(tmp[0].floatValue, tmp[1].floatValue, equals)), 0, t));
+				ss << ::operation(tmp[0].floatValue, tmp[1].floatValue, equals);
+				return (new Operand<float>((ss.str()), (ss.str()).find(".") != std::string::npos ? (ss.str()).size() - (ss.str()).find(".") - 1 : 0, t));
 			case _double :
 				equals == '%' ? throw std::invalid_argument("can't % with double") : 0;
 				tmp[0].doubleValue = static_cast<double>(value);
 				tmp[1].doubleValue = ::back_value<double>(second);
-				return (new Operand<double>(std::to_string(::operation(tmp[0].doubleValue, tmp[1].doubleValue, equals)), 0, t));
+				ss << ::operation(tmp[0].floatValue, tmp[1].floatValue, equals);
+				return (new Operand<double>((ss.str()), (ss.str()).find(".") != std::string::npos ? (ss.str()).size() - (ss.str()).find(".") - 1 : 0, t));
 		}
 	}
 	catch (std::exception & e)
