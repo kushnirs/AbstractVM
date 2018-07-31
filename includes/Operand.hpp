@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Operand.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
+/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/20 19:21:40 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/30 12:56:19 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/31 13:30:05 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #define OPERAND_HPP
 
 #include <iomanip>
-#include <map>
 #include <limits>
 #include "IOperand.hpp"
 #include "AVM.hpp"
@@ -37,15 +36,18 @@ class Operand : public IOperand
 		eOperandType	type;
 	public:
 		IOperand const *	castType(IOperand const & second, char equals) const;
-		T 					getValue(void) const;
+
+		T					getValue(void) const;
 		int					getPrecision( void ) const;
 		eOperandType		getType( void ) const;
+
 		IOperand const *	operator+( IOperand const & rhs) const;
 		IOperand const *	operator-( IOperand const & rhs) const;
 		IOperand const *	operator*( IOperand const & rhs) const;
 		IOperand const *	operator/( IOperand const & rhs) const;
 		IOperand const *	operator%( IOperand const & rhs) const;
-		std::string const & toString( void ) const;
+		std::string const &	toString( void ) const;
+
 		Operand(std::string str, int pres, eOperandType t);
 		Operand(Operand<T> & a);
 		virtual ~Operand( void );

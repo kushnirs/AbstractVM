@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AVM.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
+/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:42 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/30 19:27:45 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/31 12:55:17 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,17 @@ class AbstarctVM
 {
 	private:
 		std::stack<std::shared_ptr<const IOperand>>	avm;
-		std::string				message;
-		std::string				string;
-		std::string				command;
-		eOperandType			type;
-		bool					ex;
+		std::string									message;
+		std::string									string;
+		std::string									command;
+		eOperandType								type;
+		bool										ex;
 
-		void				parser(bool inp);
+		IOperand const *	createOperand(void) const;
 		bool				parse_command(std::string str);
+		void				parser(bool inp);
 		void				parse_value(bool comment, std::vector<std::string> & tokens);
 		void				apply_instr();
-		IOperand const *	createOperand(void) const;
 
 		void				read_std_in();
 		int					read_file(std::string const &name);

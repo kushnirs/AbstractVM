@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IOperand.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
+/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/20 17:33:58 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/25 16:27:07 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/31 12:41:58 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@
 #include <vector>
 #include <stack>
 #include <typeinfo> 
-#include <stdio.h>
 #include <cstdlib>
 #include <memory>
 

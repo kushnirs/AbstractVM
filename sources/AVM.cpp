@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AVM.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sergee <sergee@student.42.fr>              +#+  +:+       +#+        */
+/*   By: skushnir <skushnir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/10 13:08:44 by skushnir          #+#    #+#             */
-/*   Updated: 2018/07/30 19:39:52 by sergee           ###   ########.fr       */
+/*   Updated: 2018/07/31 13:30:26 by skushnir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,8 @@ void AbstarctVM::Dump() {
 	while(!tmp.empty())
 	{
 		std::shared_ptr< const std::string> str(&(tmp.top()->toString()));
-		*(message.end() - 1) != '\n' && message.size()?  message.append("\n" + *str + "\n") : message.append(*str + "\n");
+		*(message.end() - 1) != '\n' && message.size() ?
+			message.append("\n" + *str + "\n") : message.append(*str + "\n");
 		tmp.pop();
 	}
 }
@@ -178,13 +179,15 @@ void AbstarctVM::Empty() {
 	avm.empty() ? throw std::invalid_argument("can't clear empty stack") : 0;
 	while(!avm.empty())
 		avm.pop();
-	*(message.end() - 1) != '\n' && message.size()?  message.append("\n stack cleared \n") : message.append("stac cleared \n");
+	*(message.end() - 1) != '\n' && message.size() ?
+		message.append("\n stack cleared \n") : message.append("stack cleared \n");
 }
 
 void AbstarctVM::Stack_size() {
 	std::stringstream ss;
 	ss << "stack size = " << avm.size();
-	*(message.end() - 1) != '\n' && message.size()?  message.append("\n" + ss.str() + "\n") : message.append(ss.str() + "\n");
+	*(message.end() - 1) != '\n' && message.size() ?
+		message.append("\n" + ss.str() + "\n") : message.append(ss.str() + "\n");
 }
 
 // Operations
@@ -194,7 +197,8 @@ void AbstarctVM::Stack_size() {
 
 void AbstarctVM::apply_instr()
 {
-	std::string	str_action[12] =	{ "push", "pop", "assert", "dump", "add", "sub", "mul", "div", "print", "mod", "empty", "size"};
+	std::string	str_action[12] =	{ "push", "pop", "assert", "dump", "add", "sub",
+									"mul", "div", "print", "mod", "empty", "size"};
 	void (AbstarctVM::*action[12])() =
 	{
 		&AbstarctVM::Push, &AbstarctVM::Pop, &AbstarctVM::Assert, &AbstarctVM::Dump,
@@ -259,7 +263,8 @@ void	AbstarctVM::parse_value(bool comment, std::vector<std::string> & tokens)
 			if ((string[i] == '-' && i) || string[0] == '.' || str3.find(string[i]) == std::string::npos || a == 2)
 				throw std::invalid_argument("wrong symbol in number");
 		}
-		a && (type == _int8 || type == _int16 || type == _int32) ? throw std::invalid_argument("discrepancy type with number") : 0;
+		a && (type == _int8 || type == _int16 || type == _int32) ?
+			throw std::invalid_argument("discrepancy type with number") : 0;
 	}
 }
 
@@ -322,7 +327,7 @@ int AbstarctVM::read_file(std::string const &name){
 	while (std::getline(iss, string, '\n') && ++counter)
 		parser(false);
 	!ex ? throw std::invalid_argument("can't finish without 'exit' command") : 0;
-	return (-1);
+	return (1);
 }
 
 void		AbstarctVM::start_vm(int ac, char **av)

@@ -1,5 +1,6 @@
 push float(6.3)
 push float(2)
 div
+div
 dump
 exit
