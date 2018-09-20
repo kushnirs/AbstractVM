@@ -23,8 +23,8 @@ extern int counter;
 union t_val
 {
 	long int	Value32;
-	float		floatValue;
-	double		doubleValue;
+	double		floatValue;
+	long double		doubleValue;
 };
 
 template < typename T>
